@@ -47,10 +47,12 @@
             text-transform: uppercase;
             letter-spacing: 2px;
         }
+
         .nav-menu {
             display: flex;
             gap: 2rem;
         }
+
         .nav-menu a {
             color: #ffffff;
             text-decoration: none;
@@ -58,6 +60,7 @@
             position: relative;
             padding: 0.5rem 0;
         }
+
         .nav-menu a::after {
             content: '';
             position: absolute;
@@ -68,72 +71,67 @@
             background-color: #ff0000;
             transition: width 0.3s;
         }
+
         .nav-menu a:hover::after {
             width: 100%;
         }
+
         /* Main Content */
         .main-content {
             padding-top: 80px;
             min-height: 100vh;
         }
+
         /* Content Info */
         .content-info {
-            width: 100%;
+            max-width: 1400px;
             margin: 2rem auto;
             padding: 0 2rem;
             display: grid;
             grid-template-columns: 1fr 300px;
             gap: 2rem;
         }
-        
-        .video-container {
-            position: relative;
-            padding-bottom: 56.25%;
-            /* 16:9 aspect ratio */
-            height: 0;
-            overflow: hidden;
-        }
-        .video-player {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
+
         .main-info {
             background: #1a1a1a;
             padding: 2rem;
             border-radius: 10px;
         }
+
         .title-section {
             margin-bottom: 2rem;
         }
+
         .title-section h1 {
             font-size: 2rem;
             margin-bottom: 1rem;
             color: #fff;
         }
+
         .meta-info {
             display: flex;
             gap: 2rem;
             color: #888;
             margin-bottom: 1rem;
         }
+
         .meta-item {
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
+
         .rating {
             color: #ff0000;
             font-weight: bold;
         }
+
         .description {
             color: #ccc;
             margin-bottom: 2rem;
             line-height: 1.8;
-            width: 100%;
         }
+
         /* Episode List */
         .episode-list {
             background: #1a1a1a;
@@ -141,10 +139,12 @@
             border-radius: 10px;
             height: fit-content;
         }
+
         .episode-list h2 {
             margin-bottom: 1rem;
             color: #ff0000;
         }
+
         .episodes {
             display: flex;
             flex-direction: column;
@@ -152,6 +152,7 @@
             max-height: 400px;
             overflow-y: auto;
         }
+
         .episode-item {
             padding: 1rem;
             background: #2a2a2a;
@@ -159,33 +160,40 @@
             cursor: pointer;
             transition: background-color 0.3s;
         }
+
         .episode-item:hover {
             background: #333;
         }
+
         .episode-item.active {
             background: #ff0000;
         }
+
         /* Recommendations */
         .recommendations {
             padding: 2rem;
             max-width: 1400px;
             margin: 0 auto;
         }
+
         .recommendations h2 {
             color: #ff0000;
             margin-bottom: 1.5rem;
         }
+
         .recommendations-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 1.5rem;
         }
+
         .recommendation-card {
             background: #1a1a1a;
             border-radius: 10px;
             overflow: hidden;
             transition: transform 0.3s;
         }
+
         .recommendation-card:hover {
             transform: translateY(-5px);
         }
@@ -226,16 +234,11 @@
             .header-container {
                 flex-direction: column;
                 gap: 1rem;
-                
-            }
-            .content-wrapper {
-                grid-template-columns: 1fr;
             }
 
             .nav-menu {
                 flex-direction: column;
                 align-items: center;
-                display: none;
             }
 
             .meta-info {
@@ -255,7 +258,7 @@
         <div class="header-container">
             <a href="index.html" class="logo">AnimeFlix</a>
             <nav class="nav-menu">
-                <a href="home.html">Home</a>
+                <a href="index.html">Home</a>
                 <a href="anime-list.html">Anime List</a>
                 <a href="film.html">Movies</a>
                 <a href="New Releases.html">New Releases</a>
@@ -265,7 +268,10 @@
 
     <main class="main-content">
         <div class="video-container">
-            <iframe id="videoPlayer" class="video-player" frameborder="0" allowfullscreen></iframe>
+
+            <iframe class="video-player" width="100%" height="600" frameborder="0" 
+            src=""
+                    allowfullscreen allow="autoplay;">
             </iframe>
         <div class="content-info">
             <div class="main-info">
@@ -291,6 +297,11 @@
                 </div>
             </div>
 
+            <div class="episode-list">
+                <div class="episodes">
+                   <img src="picture/logo.png" alt="">
+                </div>
+            </div>
         </div>
 
         <!-- Previous code remains the same until the recommendations section -->
