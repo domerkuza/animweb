@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="picture/logo.png">
+    <title>Movies - AnimeFlix</title>
+    <style>
+        /* Base styles from main site */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(to bottom, #000000, transparent);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ff0000;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-menu a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #ff0000;
+            transition: width 0.3s;
+        }
+
+        .nav-menu a:hover::after {
+            width: 100%;
+        }
+
+        .nav-menu :nth-child(3) {
+            color: red;
+        }
+
+
+        /* Movies Page Specific Styles */
+        .main-content {
+            padding-top: 80px;
+        }
+
+        /* Movies Grid */
+        .movies-section {
+            padding: 4rem 2rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #ff0000;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .movies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .movie-card {
+            background: black;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .movie-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .movie-image {
+            width: 100%;
+            height: 375px;
+            object-fit: cover;
+        }
+
+        .movie-info {
+            padding: 1.5rem;
+        }
+
+        .movie-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+
+        .movie-meta {
+            display: flex;
+            justify-content: space-between;
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .movie-rating {
+            color: #ff0000;
+            font-weight: bold;
+        }
+
+        .movie-description {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .watch-button {
+            display: inline-block;
+            width: 100%;
+            padding: 0.8rem;
+            background-color: #ff0000;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+
+        .watch-button:hover {
+            background-color: #cc0000;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #000000;
+            padding: 4rem 2rem 2rem;
+            border-top: 2px solid #ff0000;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+        }
+
+        .footer-section h3 {
+            color: #ff0000;
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            color: #888888;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #ff0000;
+        }
+
+        .newsletter input {
+            width: 100%;
+            padding: 0.8rem;
+            margin-bottom: 1rem;
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            color: #ffffff;
+            border-radius: 5px;
+        }
+
+        .newsletter button {
+            width: 100%;
+            padding: 0.8rem;
+            background: #ff0000;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .newsletter button:hover {
+            background: #cc0000;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #333333;
+            color: #888888;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 3rem;
+        }
+
+        .page-button {
+            padding: 0.8rem 1.2rem;
+            background: #1a1a1a;
+            border: 1px solid #ff0000;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .page-button:hover,
+        .page-button.active {
+            background-color: #ff0000;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+        
+            .filter-select {
+                width: 100%;
+            }
+
+            .movie-card {
+                max-width:500px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="header-container">
+          <a href="#" class="logo">AnimeFlix</a>
+          
+          <!-- Hamburger menu for mobile -->
+          <input type="checkbox" id="nav-toggle" class="nav-toggle">
+          <label for="nav-toggle" class="nav-toggle-label">
+            <span></span>
+            <span></span>
+            <span></span>
+          </label>
+          
+          <nav class="nav-menu">
+            <a href="index.html" class="active">Home</a>
+            <a href="anime-list.html">Anime List</a>
+            <a href="film.html">Movies</a>
+            <a href="New Releases.html">New Releases</a>
+          </nav>
+        </div>
+      </header>
+      
+      <style>
+      /* Reset and base styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      body {
+        font-family: 'Arial', sans-serif;
+        line-height: 1.6;
+      }
+      
+      /* Header styles */
+      .header {
+        background: linear-gradient(to bottom, #000000, transparent);
+        padding: 1rem 0;
+        position: fixed;
+        width: 100%;
+        z-index: 1000;
+      }
+      
+      .header-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      
+      .logo {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #ff0000;
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+      }
+      
+      /* Navigation menu */
+      .nav-menu {
+        display: flex;
+        gap: 2rem;
+      }
+      
+      .nav-menu a {
+        color: #ffffff;
+        text-decoration: none;
+        font-weight: 500;
+        position: relative;
+        padding: 0.5rem 0;
+      }
+      
+      .nav-menu a::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background-color: #ff0000;
+        transition: width 0.3s;
+      }
+      
+      .nav-menu a:hover::after {
+        width: 50%;
+      }
+      
+      .nav-menu .active {
+        color: #ff0000;
+      }
+      
+      /* Hamburger menu */
+      .nav-toggle {
+        display: none;
+      }
+      
+      .nav-toggle-label {
+        display: none;
+        cursor: pointer;
+        padding: 1rem;
+      }
+      
+      .nav-toggle-label span {
+        display: block;
+        width: 25px;
+        height: 2px;
+        background-color: #ffffff;
+        margin: 5px 0;
+        transition: 0.3s;
+      }
+      
+      /* Responsive design */
+      @media (max-width: 768px) {
+        .nav-toggle-label {
+          display: block;
+        }
+      
+        .nav-menu {
+          display: none;
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
+          flex-direction: column;
+          padding: 1rem 0;
+          text-align: center;
+        }
+      
+        .nav-toggle:checked ~ .nav-menu {
+          display: flex;
+        }
+      
+        .nav-menu a {
+          padding: 1rem 2rem;
+        }
+      
+        .nav-menu a::after {
+          display: none;
+        }
+      }
+      
+      </style>
+      
+    <script>
+        // Add background to header when scrolled
+        window.addEventListener('scroll', () => {
+          const header = document.querySelector('.header');
+          if (window.scrollY > 50) {
+            header.classList.add('scrolled');
+          } else {
+            header.classList.remove('scrolled');
+          }
+        });
+        </script>
+
+    </section>
+
+    <section class="movies-section">
+        <h1 class="section-title">Anime Movies</h1>
+
+        <div class="movies-grid">
+
+            <!-- Movie Card 9 -->
+            <div class="movie-card">
+                <img src="picture/Natsu e no tunnel sayonara no.jpeg" class="movie-image">
+                <div class="movie-info">
+                    <h3 class="movie-title">Natsu e no Tunnel, Sayonara no Deguchi</h3>
+                    <div class="movie-meta">
+                        <span>2022</span>
+                        <span class="movie-rating">★ 8.3/10</span>
+                    </div>
+                    <p class="movie-description">
+                        مع “كاورو تونو” اشاعة تقول ان قوانين المكان والزمان لا تنطبق على نفق “اوراشيما”. إذا وجدته، اعبر
+                        من خلاله وستجد رغبة قلبك على الجانب الآخر، مقابل سنوات من حياتك. ذات ليلة، “كاورو” فجأة يجد نفسه
+                        يقف أمام النفق، والذي يبدو بشكل مفاجئ مثل الذي تصفه الشائعات. وهو يفكر في “كارين”، الأخت التي
+                        فقدها في حادث قبل خمس سنوات.
+                    </p>
+                    <a href="#" class="watch-button">Watch Now</a>
+                </div>
+            </div>
+
+            <!-- Movie Card 2 -->
+            <div class="movie-card">
+                <img src="picture/I want to eat your pancreas.jpeg" alt="Weathering with You" class="movie-image">
+                <div class="movie-info">
+                    <h3 class="movie-title">i want eat your pancreas</h3>
+                    <div class="movie-meta">
+                        <span>2019</span>
+                        <span class="movie-rating">★ 9.5/10</span>
+                    </div>
+                    <p class="movie-description">
+                        'تدور القصة حول فتى انطوائي يكتشف عن طريق الصدفة مذكرات زميلته في الصف، ساكورا ياماوتشي، ليكتشف
+                        أنها تعاني من مرض خطير في البنكرياس ولم يتبقَ لها الكثير من الوقت للعيش. رغم اختلاف شخصياتهما
+                        تمامًا، تبدأ ساكورا في التقرب منه وتقضي معه أيامها الأخيرة، محاولة أن تجعله يرى الحياة بمنظور
+                        مختلف، بينما يبقى هو مترددًا في التعبير عن مشاعره',
+                    </p>
+                    <a href="#" class="watch-button">Watch Now</a>
+                </div>
+            </div>
+
+            <!-- Movie Card 3 -->
+            <div class="movie-card">
+                <img src="picture/Kimetsu no Yaiba_ Mugen Ressha-hen (TV).jpeg" class="movie-image">
+                <div class="movie-info">
+                    <h3 class="movie-title">Demon Slayer: Mugen Train</h3>
+                    <div class="movie-meta">
+                        <span>2020</span>
+                        <span class="movie-rating">★ 9.7/10</span>
+                    </div>
+                    <p class="movie-description">
+                        (قاتل الشياطين: قطار اللانهاية) هو فيلم أنمي ياباني صدر عام 2020، وهو تكملة مباشرة لأحداث مسلسل
+                        . يتبع الفيلم تانجيرو كامادو ورفاقه زينيتسو وإينوسكي، برفقة هاشيرا اللهب، كيوجورو رينغوكو، أثناء
+                        مهمتهم للتحقيق في سلسلة من الاختفاءات الغامضة على متن قطار اللانهاية. سرعان ما يكتشفون أن القطار
+                        مسيطر عليه من قبل أحد الشياطين القوية، إنمو، وهو أحد الأعضاء الأوائل في القمر الشيطاني، .
+                    </p>
+                    <a href="#" class="watch-button">Watch Now</a>
+                </div>
+            </div>
+            <!-- Movie Card 4-->
+            <div class="movie-card">
+                <img src="picture/jujutsu kaisen 0.jpeg" class="movie-image">
+                <div class="movie-info">
+                    <h3 class="movie-title">Jujutsu Kaisen 0</h3>
+                    <div class="movie-meta">
+                        <span>2020</span>
+                        <span class="movie-rating">★ 9.1/10</span>
+                    </div>
+                    <p class="movie-description">
+                        اوكوتسو يوتا” مسكون. منذ وفاة صديقة طفولته “ريكا” في حادث مروري، ظل شبحها عالقًا معه. لكن روحها
+                        لا تظهر كما عرفها “يوتا” من قبل. بدلاً من ذلك، تظهر ككيان وحشي وقوي يحميه بشدة. غير قادر على
+                        السيطرة على سلوك “ريكا” العنيف، يجعل “يوتا” عاجز عن وقف إراقة الدماء الناجم عن انتقامها الوحشي.
+                        نتيجة لذلك، عندما ألقي القبض عليه من قبل سحرة “جوجوتسو”، حماة العالم السريين المدربين على محاربة
+                        الكيانات مثل “ريكا”. ومع ذلك، فإن سيد السحر “غوجو ساتورو”، سينضم إلى مدرسة “جوجوتسو” الثانوية
+                        ويتعلم التحكم في “ريكا” لمساعدة الناس. .
+                    </p>
+                    <a href="" class="watch-button">Watch Now</a>
+                </div>
+            </div>
+
+            <!-- Movie Card 5 -->
+            <div class="movie-card">
+                <img src="picture/Spirited Away.jpeg" class="movie-image">
+                <div class="movie-info">
+                    <h3 class="movie-title">Spirited Away</h3>
+                    <div class="movie-meta">
+                        <span>2001</span>
+                        <span class="movie-rating">★ 9.9/10</span>
+                    </div>
+                    <p class="movie-description">
+                        أثناء انتقال عائلتها إلى الضواحي، تجول فتاة في العاشرة من عمرها في عالم تحكمه الآلهة والساحرات
+                        والأرواح
+                    </p>
+                    <a href="#" class="watch-button">Watch Now</a>
+                </div>
+            </div>
+
+            <!-- Movie Card 6-->
+            <div class="movie-card">
+                <img src="picture/A Silent Voice.jpeg" class="movie-image">
+                <div class="movie-info">
+                    <h3 class="movie-title">A Silent Voice</h3>
+                    <div class="movie-meta">
+                        <span>2016</span>
+                        <span class="movie-rating">★ 9.6/10</span>
+                    </div>
+                    <p class="movie-description">
+                        شاب يسعى للتكفير عن أفعاله السابقة في التنمر على زميل أصم من خلال تعلم لغة الإشارة.
+                    </p>
+                    <a href="#" class="watch-button">Watch Now</a>
+                </div>
+            </div>
+
+            <!-- Movie Card 7 -->
+
+
+            <!-- Movie Card 1 -->
+            <div class="movie-card">
+                <img src="picture/pic10.jpeg" alt="Your Name" class="movie-image">
+                <div class="movie-info">
+                    <h3 class="movie-title">Your Name</h3>
+                    <div class="movie-meta">
+                        <span>2016</span>
+                        <span class="movie-rating">★ 9.8/10</span>
+                    </div>
+                    <p class="movie-description">تشارك مراهقان رابطًا عميقًا وسحريًا عندما يكتشفان أنهما يتبادلان
+                        الأجساد. تزداد الأمور تعقيدًا عندما يقرر الصبي والفتاة اللقاء شخصيًا.</p>
+                    <a href="#" class="watch-button">Watch Now</a>
+                </div>
+            </div>
+            <!-- Movie Card 8 -->
+            <div class="movie-card">
+                <img src="picture/Howl's Moving Castle.jpeg" class="movie-image">
+                <div class="movie-info">
+                    <h3 class="movie-title">Howl's Moving Castle</h3>
+                    <div class="movie-meta">
+                        <span>2004</span>
+                        <span class="movie-rating">★ 9.7/10</span>
+                    </div>
+                    <p class="movie-description">تتحول شابة إلى امرأة مسنّة بسبب لعنة من ساحرة. تجد عملاً كعاملة نظافة
+                        في ق castle متحرك يملكه ساحر غامض يدعى هاول.</p>
+                    <a href="#" class="watch-button">Watch Now</a>
+                </div>
+            </div>
+            <div class="movie-card">
+                <img src="picture/Violet Evergarden The Movie.jpeg" class="movie-image">
+                <div class="movie-info">
+                    <h3 class="movie-title">Violet Evergarden Gaiden: Eien to Jidou Shuki Ningyou</h3>
+                    <div class="movie-meta">
+                        <span>2020</span>
+                        <span class="movie-rating">★ 9.5/10</span>
+                    </div>
+                    <p class="movie-description">
+                        يزابيلا”، ابنة عائلة “يورك” النبيلة، مسجلة في أكاديمية للفتيات ويتم إعدادها لتصبح سيدة نبيلة
+                        مؤهلة.لاحظت عائلتها أنها تكافح في دروسها وقررت توظيف “فايوريت ايفاغادين” شخصيًا لتعليمها.
+                    </p>
+                    <a href="#" class="watch-button">Watch Now</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="pagination">
+            <button class="page-button active">1</button>
+            <button class="page-button">2</button>
+            <button class="page-button">3</button>
+            <button class="page-button">4</button>
+            <button class="page-button">></button>
+        </div>
+    </section>
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About AnimeFlix</h3>
+                <p>Your premier destination for anime streaming. Watch your favorite shows in HD quality.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Anime List</a></li>
+                    <li><a href="#">Movies</a></li>
+                    <li><a href="#">New Releases</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Help & Support</h3>
+                <ul class="footer-links">
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Newsletter</h3>
+                <div class="newsletter">
+                    <input type="email" placeholder="Enter your email">
+                    <button type="submit">Subscribe</button>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 AnimeFlix. All rights reserved. Developed by [Deroumi.reda]</p>
+        </div>
+    </footer>
+    <main>
+        <script>
+            const moviesCards = document.querySelectorAll('.movie-card');
+            moviesCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const movieTitle = card.querySelector('.movie-title').textContent;
+                    const movieYear = card.querySelector('.movie-meta span').textContent;
+                    const movieRating = card.querySelector('.movie-rating').textContent;
+                    const movieDesc = card.querySelector('.movie-description').textContent;
+                    const movieImage = card.querySelector('.movie-image').src;
+
+                    // Store movie data in localStorage
+                    const movieData = {
+                        title: movieTitle,
+                    };
+                    localStorage.setItem('selectedMovie', JSON.stringify(movieData));
+
+                    // Navigate to watch page
+                    window.location.href = 'watch3.html';
+                });
+            });
+        </script>
+</body>
+
+</html>

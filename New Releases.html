@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="picture/logo.png">
+    <title>AnimeFlix</title>
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #0a0a0a;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(to bottom, #000000, transparent);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            transition: 0.3s;
+        }
+
+        header.scrolled {
+            background: #000000;
+            box-shadow: 0 2px 10px rgba(255, 0, 0, 0.2);
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: red;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-menu a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #ff0000;
+            transition: width 0.3s;
+        }
+         .nav-menu :nth-child(4){
+            color: red;
+         }
+
+        .nav-menu a:hover::after {
+            width: 100%;
+        }
+
+
+        /* Latest Releases */
+        .latest-releases {
+            background-color: #1a1a1a;
+            padding: 6rem 2rem;
+        }
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #ff0000;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .episode-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .episode-card {
+            background: #000000;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+
+        .episode-card:hover {
+            transform: scale(1.03);
+        }
+
+        .episode-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .episode-info {
+            padding: 1.5rem;
+        }
+
+        .episode-info h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .episode-meta {
+            color: #888888;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .watch-button {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background-color: #ff0000;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            transition: background-color 0.3s;
+        }
+
+        .watch-button:hover {
+            background-color: #cc0000;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #000000;
+            padding: 4rem 2rem 2rem;
+            border-top: 2px solid #ff0000;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+        }
+
+        .footer-section h3 {
+            color: #ff0000;
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            color: #888888;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #ff0000;
+        }
+
+        .newsletter input {
+            width: 100%;
+            padding: 0.8rem;
+            margin-bottom: 1rem;
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            color: #ffffff;
+            border-radius: 5px;
+        }
+
+        .newsletter button {
+            width: 100%;
+            padding: 0.8rem;
+            background: #ff0000;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .newsletter button:hover {
+            background: #cc0000;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #333333;
+            color: #888888;
+        }
+          /* Pagination */
+          .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 3rem;
+        }
+
+        .page-button {
+            padding: 0.8rem 1.2rem;
+            background: #1a1a1a;
+            border: 1px solid #ff0000;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .page-button:hover,
+        .page-button.active {
+            background-color: #ff0000;
+        }
+
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-menu {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .anime-grid,
+            .episode-grid,
+            .category-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <a href="#" class="logo">AnimeFlix</a>
+            <nav class="nav-menu">
+                <a href="index.html">Home</a>
+                <a href="anime-list.html">Anime List</a>
+                <a href="film.html">Movies</a>
+                <a href="New Releases.html">New Releases</a>
+            </nav>
+        </div>
+    </header>
+    <section class="latest-releases">
+        <h2 class="section-title">Latest Episodes</h2>
+        <div class="episode-grid">
+            <div class="episode-card">
+                <img src="picture/200x300 solo.jpeg" alt="Episode Title">
+                <div class="episode-info">
+                    <h3>Solo Leveling Season 2 -Arise from the Shadow- Episode 5</h3>
+                    <div class="episode-meta">Released: 2 hours ago</div>
+                </div>
+            </div>
+            <div class="episode-card">
+                <img src="picture/200x300 attak.jpeg" alt="Episode Title">
+                <div class="episode-info">
+                    <h3>Attack on Titan - Episode 8</h3>
+                    <div class="episode-meta">Released: 5 hours ago</div>
+                </div>
+            </div>
+            <div class="episode-card">
+               <a href="https://youtu.be/QyEDvQFWH3E?si=o_9-7D198AzArqO6" > <img src="picture/200x300 hell.jpeg" alt="Episode Title"></a>
+               </a> <div class="episode-info">
+                    <h3>Hell's Paradise Season 2 Official Teaser</h3>
+                    <div class="episode-meta">Released: 8 hours ago</div>
+                </div>
+            </div>
+            <div class="episode-card">
+                <img src="picture/200x3oo bleach.jpeg" alt="Episode Title">
+                <div class="episode-info">
+                    <h3>BLEACH: Thousand Year-Blood War - Episode 13</h3>
+                    <div class="episode-meta">Released: 6 hours ago</div>
+                </div>
+            </div>
+            <div class="episode-card">
+                <img src="picture/Kusuriya no Hitorigoto 2nd Season.jpeg" alt="Episode Title">
+                <div class="episode-info">
+                    <h3>Kusuriya no Hitorigoto 2nd Season- Episode 3</h3>
+                    <div class="episode-meta">Released: 11 hours ago</div>
+                </div>
+            </div>
+            <div class="episode-card">
+              <a href="https://youtu.be/KC2eLA_N8Ho?si=jdglDZ0IU-Jnccme">  <img src="picture/200x300 king.jpeg" alt="Episode Title"></a>
+                <div class="episode-info">
+                    <h3>The Beginning After the End is coming in 2025!</h3>
+                    <div class="episode-meta">Released: 2day ago</div>
+                    </a>
+                </div>
+            </div>
+            <div class="episode-card">
+                <img src="picture/200x300 talker.jpeg" alt="Episode Title">
+                <div class="episode-info">
+                    <h3>The Most Notorious "Talker" Runs the World's Greatest Clan -Episode 21 </h3>
+                    <div class="episode-meta">Released: 2day ago</div>
+                </div>
+            </div>
+            <div class="episode-card">
+               <a href="https://youtu.be/jB8N_ywHajo?si=CeaQv1Ub74LN5O7-" > <img src="picture/200x300 scarlet.jpeg" alt="Episode Title"></a>
+                <div class="episode-info">
+                    <h3>New Anime:May I Ask for One Final Thing - Trailer</h3>
+                    <div class="episode-meta">Released: 2day ago</div>
+                </div>
+            </div>
+            <div class="episode-card">
+                <img src="picture/200x300 sakamoto days.jpeg" alt="Episode Title">
+                <div class="episode-info">
+                    <h3>sakamoto days - Episode 17 </h3>
+                    <div class="episode-meta">Released: 3day ago</div>>
+                </div>
+            </div>
+            <div class="episode-card">
+                <img src="picture/Shangri-La Frontier Kusoge Hunter Kamige ni Idoman to su 2nd Season.jpeg" alt="Episode Title">
+                <div class="episode-info">
+                    <h3>Shangri-La Frontier: Kusoge Hunter Kamige ni Idoman to su 2nd Season - Episode 8</h3>
+                    <div class="episode-meta">Released: 2day ago</div>
+                </div>
+            </div>
+            <div class="episode-card">
+                <img src="picture/drstone.jpeg" alt="Episode Title">
+                <div class="episode-info">
+                    <h3>Dr. Stone: Science Future -Episode 5 </h3>
+                    <div class="episode-meta">Released: 3day ago</div>
+                </div>
+            </div>
+            <div class="episode-card">
+                <img src="picture/Watashi no Shiawase na Kekkon 2nd Season.jpeg" alt="Episode Title">
+                <div class="episode-info">
+                    <h3>Watashi no Shiawase na Kekkon 2nd Season  -Episode 10 </h3>
+                    <div class="episode-meta">Released: 3day ago</div>
+                </div>
+            </div>
+        </div>
+        <div class="pagination">
+            <button class="page-button active">1</button>
+            <button class="page-button">2</button>
+            <button class="page-button">3</button>
+            <button class="page-button">4</button>
+            <button class="page-button">></button>
+        </div>
+    </section>
+
+   
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About AnimeFlix</h3>
+                <p>Your premier destination for anime streaming. Watch your favorite shows in HD quality.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Anime List</a></li>
+                    <li><a href="#">Movies</a></li>
+                    <li><a href="#">New Releases</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Help & Support</h3>
+                <ul class="footer-links">
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Newsletter</h3>
+                <div class="newsletter">
+                    <input type="email" placeholder="Enter your email">
+                    <button type="submit">Subscribe</button>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 AnimeFlix. All rights reserved. Developed by [Deroumi.reda]</p>
+        </div>
+    </footer>
+</body>
+</html>

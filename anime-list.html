@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="picture/logo.png">
+    <title>AnimeFlix - Anime List</title>
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+    
+
+        /* Main Content Styles */
+        .main-content {
+            padding-top: 80px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-bottom: 4rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.8rem;
+            margin-bottom: 3rem;
+            color: #ff0000;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Anime Grid Styles */
+        .anime-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+            padding: 0 2rem;
+        }
+
+        .anime-card {
+            background: black;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+
+        .anime-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .anime-card img {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+        }
+
+        .anime-info {
+            padding: 1rem;
+        }
+
+        .anime-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: #ffffff;
+        }
+
+        .anime-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 0.5rem;
+        }
+
+        .rating {
+            color: #ff0000;
+            font-weight: bold;
+        }
+
+        .genre-tag {
+            display: inline-block;
+            background-color: rgba(255, 0, 0, 0.2);
+            color: #ff0000;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        /* Pagination Styles */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .pagination button {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1rem;
+            margin: 0 0.25rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .pagination button:hover {
+            background-color: #ff0000;
+        }
+
+        /* Footer Styles */
+        footer {
+            background-color: #000000;
+            padding: 2rem;
+            border-top: 2px solid #ff0000;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-section h3 {
+            color: #ff0000;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: #888;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #ff0000;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #333;
+            color: #888;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+
+            .anime-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="header-container">
+          <a href="#" class="logo">AnimeFlix</a>
+          
+          <!-- Hamburger menu for mobile -->
+          <input type="checkbox" id="nav-toggle" class="nav-toggle">
+          <label for="nav-toggle" class="nav-toggle-label">
+            <span></span>
+            <span></span>
+            <span></span>
+          </label>
+          
+          <nav class="nav-menu">
+            <a href="#" class="active">Home</a>
+            <a href="anime-list.html">Anime List</a>
+            <a href="film.html">Movies</a>
+            <a href="New Releases.html">New Releases</a>
+          </nav>
+        </div>
+      </header>
+      
+      <style>
+      /* Reset and base styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      body {
+        font-family: 'Arial', sans-serif;
+        line-height: 1.6;
+      }
+      
+      /* Header styles */
+      .header {
+        background: linear-gradient(to bottom, #000000, transparent);
+        padding: 1rem 0;
+        position: fixed;
+        width: 100%;
+        z-index: 1000;
+      }
+      
+      .header-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      
+      .logo {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #ff0000;
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+      }
+      
+      /* Navigation menu */
+      .nav-menu {
+        display: flex;
+        gap: 2rem;
+      }
+      
+      .nav-menu a {
+        color: #ffffff;
+        text-decoration: none;
+        font-weight: 500;
+        position: relative;
+        padding: 0.5rem 0;
+      }
+      
+      .nav-menu a::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background-color: #ff0000;
+        transition: width 0.3s;
+      }
+      
+      .nav-menu a:hover::after {
+        width: 50%;
+      }
+      
+      .nav-menu .active {
+        color: #ff0000;
+      }
+      
+      /* Hamburger menu */
+      .nav-toggle {
+        display: none;
+      }
+      
+      .nav-toggle-label {
+        display: none;
+        cursor: pointer;
+        padding: 1rem;
+      }
+      
+      .nav-toggle-label span {
+        display: block;
+        width: 25px;
+        height: 2px;
+        background-color: #ffffff;
+        margin: 5px 0;
+        transition: 0.3s;
+      }
+      
+      /* Responsive design */
+      @media (max-width: 768px) {
+        .nav-toggle-label {
+          display: block;
+        }
+      
+        .nav-menu {
+          display: none;
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
+          flex-direction: column;
+          padding: 1rem 0;
+          text-align: center;
+        }
+      
+        .nav-toggle:checked ~ .nav-menu {
+          display: flex;
+        }
+      
+        .nav-menu a {
+          padding: 1rem 2rem;
+        }
+      
+        .nav-menu a::after {
+          display: none;
+        }
+      }
+      
+      </style>
+      
+    <script>
+        // Add background to header when scrolled
+        window.addEventListener('scroll', () => {
+          const header = document.querySelector('.header');
+          if (window.scrollY > 50) {
+            header.classList.add('scrolled');
+          } else {
+            header.classList.remove('scrolled');
+          }
+        });
+        </script>
+
+    <main class="main-content">
+        <h1 class="section-title">Anime List</h1>
+
+        <div class="anime-grid">
+            <!-- Anime cards here -->
+        </div>
+
+        <div class="pagination">
+            <button>1</button>
+            <button>2</button>
+            <button>3</button>
+            <button>4</button>
+            <button>5</button>
+            <button>Next</button>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About AnimeFlix</h3>
+                <p>Your premier destination for anime streaming. Watch your favorite shows in HD quality.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="anime-list.html">Anime List</a></li>
+                    <li><a href="movies.html">Movies</a></li>
+                    <li><a href="new-releases.html">New Releases</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Help & Support</h3>
+                <ul class="footer-links">
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="https://wa.me/212604214792">Contact Us</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 AnimeFlix. All rights reserved. Developed by [Deroumi.reda]</p>
+        </div>
+    </footer>
+
+    <script>
+        const animeData = [
+            {
+                clear:"elite",
+                title: "Classroom Of The Elite s3",
+                image: "picture/Classroom of the Elite Season 3.jpeg",
+                episodes: 13,
+                rating: 9.3,
+                genres: ["Action"]
+            },
+            {
+                clear:"dandadan",
+                title: "dandadan",
+                image: "picture/200x300 dandadan.jpeg",
+                episodes: 13,
+                rating: 9.3,
+                genres: ["Action"]
+            },
+            {
+                clear:"magus",
+                title: "ancient magus bride",
+                image: "picture/ancient magus bride.jpeg",
+                episodes: 12,
+                rating: 8.7,
+                genres: ["Action", "Fantasy", "Romance"]
+            },
+            {
+                clear:"days",
+                title: "365 Days to The Wedding",
+                image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/pic28%20(7)-8szN3uxpW4BawXzlDY8wo18NxhtRTH.jpeg",
+                episodes: 12,
+                rating: 8.5,
+                genres: ["Romance", "Slice of Life"]
+            },
+            {
+                clear:"box",
+                title: "blue Box",
+                image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/pic28%20(6)-H9GiYh9CfyR2lj7B8FSTiWkHjxU68Q.jpeg",
+                episodes: 12,
+                rating: 7.9,
+                genres: ["Romance", "School", "Sports"]
+            },
+            {
+                clear:"overlord",
+                title: "Overlord-S1",
+                image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/pic30%20(3)-KysjicFdlHAeQAf2jNCS4cSbEqVyT0.jpeg",
+                episodes: "Special",
+                rating: 9.0,
+                genres: ["Fantasy", "Crossover"]
+            },
+            {
+                clear:"talker",
+                title: "The Most Notorious Talker",
+                image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/pic30%20(6)-QEKYBiJq60o0WCnvDYItIizJtIH9jS.jpeg",
+                episodes: 12,
+                rating: 8.6,
+                genres: ["Action", "Adventure", "Fantasy"]
+            },
+            {
+                clear:"dark",
+                title: "The Dark Swordsman",
+                image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/pic29%20(2)-PiyLOUKFtHegUiPTqV8NhdNaVC4Irn.jpeg",
+                episodes: 24,
+                rating: 8.9,
+                genres: ["Dark Fantasy", "Action"]
+            },
+            {
+                clear:"witch",
+                title: "Burn the Witch",
+                image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/pic30%20(5)-0ekxnhRMyvf3YqDawd5QuFPwDy3biW.jpeg",
+                episodes: 3,
+                rating: 8.4,
+                genres: ["Fantasy", "Action", "Supernatural"]
+            },
+            {
+                title: "The Status Effect Skill",
+                image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/pic29%20(3)-KCCGNMItwrF9xQoIyj2HY8g4vfH8Uu.jpeg",
+                episodes: 13,
+                rating: 8.7,
+                genres: ["Isekai", "Fantasy", "Action"]
+            },
+            {
+                clear:"hitorigoto",
+                title: "Kusuriya no Hitorigoto",
+                image: "picture/Kusuriya no Hitorigoto.jpeg",
+                episodes: 24,
+                rating: 8.6,
+                genres: ["Mystery", "Drama", "Historical", "Seinen"]
+            },
+            {
+                clear:"horimiya",
+                title: "Horimiya",
+                image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/pic20-XDw5TLKhnXTRdCXoUn3tmGchorwZD2.jpeg",
+                episodes: 13,
+                rating: 8.7,
+                genres: ["Romance", "Slice of Life", "School"]
+            },
+
+            // Add more anime data here
+        ];
+
+        const animeGrid = document.querySelector('.anime-grid');
+
+        function createAnimeCard(anime) {
+            const card = document.createElement('div');
+            card.className = 'anime-card';
+            card.innerHTML = `
+                <img src="${anime.image}" alt="${anime.title}">
+                <div class="anime-info">
+                    <h3 class="anime-title">${anime.title}</h3>
+                    <div class="anime-meta">
+                        <span>${anime.episodes} Episodes</span>
+                        <span class="rating">★ ${anime.rating}</span>
+                    </div>
+                    ${anime.genres.map(genre => `<span class="genre-tag">${genre}</span>`).join('')}
+                </div>
+            `;
+            card.addEventListener('click', () => {
+                const movieData = {
+                    title: anime.clear,
+                };
+                localStorage.setItem('selectedMovie', JSON.stringify(movieData));
+                window.location.href = 'anime watching.html';
+            });
+            return card;
+        }
+
+        animeData.forEach(anime => {
+            animeGrid.appendChild(createAnimeCard(anime));
+        });
+    </script>
+</body>
+
+</html>

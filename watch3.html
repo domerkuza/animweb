@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="picture/logo.png">
+    <title>Watch -movies- AnimeFlix</title>
+    <style>
+        /* Base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #0a0a0a;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(to bottom, #000000, transparent);;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+    
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ff0000;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+        }
+        .nav-menu a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #ff0000;
+            transition: width 0.3s;
+        }
+        .nav-menu a:hover::after {
+            width: 100%;
+        }
+        /* Main Content */
+        .main-content {
+            padding-top: 80px;
+            min-height: 100vh;
+        }
+        /* Content Info */
+        .content-info {
+            width: 100%;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 2rem;
+        }
+        
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+        }
+        .video-player {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .main-info {
+            background: #1a1a1a;
+            padding: 2rem;
+            border-radius: 10px;
+        }
+        .title-section {
+            margin-bottom: 2rem;
+        }
+        .title-section h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+        .meta-info {
+            display: flex;
+            gap: 2rem;
+            color: #888;
+            margin-bottom: 1rem;
+        }
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .rating {
+            color: #ff0000;
+            font-weight: bold;
+        }
+        .description {
+            color: #ccc;
+            margin-bottom: 2rem;
+            line-height: 1.8;
+            width: 100%;
+        }
+        /* Episode List */
+        .episode-list {
+            background: #1a1a1a;
+            padding: 1rem;
+            border-radius: 10px;
+            height: fit-content;
+        }
+        .episode-list h2 {
+            margin-bottom: 1rem;
+            color: #ff0000;
+        }
+        .episodes {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .episode-item {
+            padding: 1rem;
+            background: #2a2a2a;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .episode-item:hover {
+            background: #333;
+        }
+        .episode-item.active {
+            background: #ff0000;
+        }
+        /* Recommendations */
+        .recommendations {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .recommendations h2 {
+            color: #ff0000;
+            margin-bottom: 1.5rem;
+        }
+        .recommendations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+        .recommendation-card {
+            background: #1a1a1a;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+        .recommendation-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .recommendation-card img {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+        }
+
+        .recommendation-info {
+            padding: 1rem;
+        }
+
+        .recommendation-title {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+
+        .recommendation-meta {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .content-info {
+                grid-template-columns: 1fr;
+            }
+
+            .episode-list {
+                order: -1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 1rem;
+                
+            }
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-menu {
+                flex-direction: column;
+                align-items: center;
+                display: none;
+            }
+
+            .meta-info {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+            
+
+            .recommendations-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <a href="index.html" class="logo">AnimeFlix</a>
+            <nav class="nav-menu">
+                <a href="home.html">Home</a>
+                <a href="anime-list.html">Anime List</a>
+                <a href="film.html">Movies</a>
+                <a href="New Releases.html">New Releases</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="video-container">
+            <iframe id="videoPlayer" class="video-player" frameborder="0" allowfullscreen></iframe>
+            </iframe>
+        <div class="content-info">
+            <div class="main-info">
+                <div class="title-section">
+                    <h1></h1>
+                    <div class="meta-info">
+                        <div class="meta-item">
+                            <span></span>
+                        </div>
+                        <div class="meta-item">
+                            <span></span>
+                        </div>
+                        <div class="meta-item">
+                            <span></span>
+                        </div>
+                        <div class="meta-item rating">
+                            <span></span>
+                        </div>
+                    </div>
+                    <p class="description">
+                       
+                     </p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Previous code remains the same until the recommendations section -->
+
+        <section class="recommendations">
+            <h2>Recommended Movies</h2>
+            <div class="recommendations-grid">
+                <div class="recommendation-card" data-video-url="https://mega.nz/embed/YOUR_URL_1">
+                   <img class="card" src="picture/pic10.jpeg" alt="Your Name">
+                    <div class="recommendation-info">
+                        <h3 class="recommendation-title">Your Name</h3>
+                        <div class="recommendation-meta">2016 • ★ 9.8/10</div>
+                    </div>
+                </div>
+                <div class="recommendation-card" data-video-url="https://mega.nz/embed/YOUR_URL_2">
+                    <img src="picture/Weathering with You.jpeg" alt="Weathering with You">
+                    <div class="recommendation-info">
+                        <h3 class="recommendation-title">Weathering with You</h3>
+                        <div class="recommendation-meta">2019 • ★ 9.5/10</div>
+                    </div>
+                </div>
+                <div class="recommendation-card" data-video-url="https://mega.nz/embed/YOUR_URL_3">
+                    <img src="picture/A Silent Voice.jpeg" alt="A Silent Voice">
+                    <div class="recommendation-info">
+                        <h3 class="recommendation-title">A Silent Voice</h3>
+                        <div class="recommendation-meta">2016 • ★ 9.6/10</div>
+                    </div>
+                </div>
+                <div class="recommendation-card" data-video-url="https://mega.nz/embed/YOUR_URL_3">
+                    <img src="picture/jujutsu kaisen 0.jpeg" alt="Jujutsu Kaisen 0">
+                    <div class="recommendation-info">
+                        <h3 class="recommendation-title">Jujutsu Kaisen 0</h3>
+                        <div class="recommendation-meta">2022 • ★ 8.6/10</div>
+                    </div>
+                </div>
+                <div class="recommendation-card" data-video-url="https://mega.nz/embed/YOUR_URL_4">
+                    <img src="picture/Spirited Away.jpeg" alt="Spirited Away">
+                    <div class="recommendation-info">
+                        <h3 class="recommendation-title">Spirited Away</h3>
+                        <div class="recommendation-meta">2001 • ★ 9.9/10</div>
+                    </div>
+                </div>
+                <div class="recommendation-card" data-video-url="https://mega.nz/embed/YOUR_URL_5">
+                    <img src="picture/Howl's Moving Castle.jpeg" alt="Howl's Moving Castle">
+                    <div class="recommendation-info">
+                        <h3 class="recommendation-title">Howl's Moving Castle</h3>
+                        <div class="recommendation-meta">2004 • ★ 9.7/10</div>
+                    </div>
+                </div>
+                <div class="recommendation-card" data-video-url="https://mega.nz/embed/YOUR_URL_11">
+                    <img src="picture/Josee e Tsuneo.jpeg" alt="Josee, the Tiger and the Fish">
+                    <div class="recommendation-info">
+                        <h3 class="recommendation-title">Josee, the Tiger and the Fish</h3>
+                        <div class="recommendation-meta">2020 • ★ 9.2/10</div>
+                    </div>
+                </div>
+                <div class="recommendation-card" data-video-url="https://mega.nz/embed/YOUR_URL_6">
+                    <img class="card" src="picture/Suki demo Kirai na Amanojaku.jpeg" alt="Princess Mononoke">
+                    <div class="recommendation-info">
+                        <h3 class="recommendation-title">Suki demo Kirai na Amanojaku</h3>
+                        <div class="recommendation-meta">2024 • ★ 8.2/10</div>
+                    </div>
+                </div>
+                <div class="recommendation-card" data-video-url="https://mega.nz/embed/YOUR_URL_6">
+                    <img class="card" src="picture/I want to eat your pancreas.jpeg" alt="Princess Mononoke">
+                    <div class="recommendation-info">
+                        <h3 class="recommendation-title">i want eat your pancreas</h3>
+                        <div class="recommendation-meta">2018 • ★ 9.7/10</div>
+                    </div>
+                </div>
+                <div class="recommendation-card" data-video-url="https://mega.nz/embed/YOUR_URL_7">
+                    <img class="card" src="picture/Suzume.jpeg" alt="Suzume">
+                    <div class="recommendation-info">
+                        <h3 class="recommendation-title">Suzume</h3>
+                        <div class="recommendation-meta">2022 • ★ 9.4/10</div>
+                    </div>
+                </div>
+                <div class="recommendation-card" data-video-url="https://mega.nz/embed/YOUR_URL_8">
+                    <img class="card" src="picture/Garden of Words.jpeg" alt="Garden of Words">
+                    <div class="recommendation-info">
+                        <h3 class="recommendation-title">Garden of Words</h3>
+                        <div class="recommendation-meta">2013 • ★ 9.3/10</div>
+                    </div>
+                </div>
+                <div class="recommendation-card" data-video-url="https://mega.nz/embed/YOUR_URL_8">
+                    <img class="card" src="picture/Natsu e no tunnel sayonara no.jpeg" alt="Natsu e no Tunnel, Sayonara no Deguchi">
+                    <div class="recommendation-info">
+                        <h3 class="recommendation-title">Natsu e no Tunnel, Sayonara no Deguchi</h3>
+                        <div class="recommendation-meta">2022 • ★ 8.3/10</div>
+                    </div>
+                </div>
+                <div class="recommendation-card" data-video-url="https://mega.nz/embed/YOUR_URL_10">
+                    <img src="picture/Violet Evergarden The Movie.jpeg" alt="Violet Evergarden: The Movie">
+                    <div class="recommendation-info">
+                        <h3 class="recommendation-title">Violet Evergarden Gaiden: Eien to Jidou Shuki Ningyou</h3>
+                        <div class="recommendation-meta">2020 • ★ 9.5/10</div>
+                    </div>
+                </div>
+                <div class="recommendation-card" data-video-url="https://mega.nz/embed/YOUR_URL_12">
+                    <img src="picture/Detective Conan Movie 24 Hiiro no Dangan.jpeg" alt="Maquia">
+                    <div class="recommendation-info">
+                        <h3 class="recommendation-title">Detective Conan Movie 24: Hiiro no Dangan</h3>
+                        <div class="recommendation-meta">2021 • ★ 9.4/10</div>
+                    </div>
+                </div>
+                <div class="recommendation-card" data-video-url="https://mega.nz/embed/YOUR_URL_15">
+                    <img src="picture/Demon Slayer Mugen Train.jpeg" alt="Demon Slayer: Mugen Train">
+                    <div class="recommendation-info">
+                        <h3 class="recommendation-title">Demon Slayer: Mugen Train</h3>
+                        <div class="recommendation-meta">2020 • ★ 9.5/10</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+    </main>
+
+    <script>
+        // Basic video player functionality
+        const video = document.querySelector('.video-player');
+        const playButton = document.querySelector('.control-button');
+        const progressBar = document.querySelector('.progress');
+        const progressContainer = document.querySelector('.progress-bar');
+        // Get all recommendation cards and video player
+        const recommendationCards = document.querySelectorAll('.recommendation-card');
+        const videoPlayer = document.querySelector('.video-player');
+        const titleElement = document.querySelector('.title-section h1');
+        const metaInfo = document.querySelector('.meta-info');
+        const description = document.querySelector('.description');
+
+        // Movie data object with complete information for all movies
+        const movieDatta = {
+            'Your Name': {
+                year: '2016',
+                duration: '1h 52min',
+                genre: 'Romance, Fantasy, Drama',
+                rating: '9.8/10',
+                description: 'يتشارك مراهقان رابطًا عميقًا وسحريًا عندما يكتشفان أنهما يتبادلان الأجساد. تزداد الأمور تعقيدًا عندما يقرر الصبي والفتاة اللقاء شخصيًا.',
+                videoUrl: 'https://mega.nz/embed/KVZmWaSI#Nq8xvSFy46Gt18PRKu2sfo3_qiOzxhNvO1d_BIzPevU'
+            },
+            'Weathering with You': {
+                year: '2019',
+                duration: '1h 54min',
+                genre: 'Romance, Fantasy, Drama',
+                rating: '9.5/10',
+                description: 'يهرب فتى في المدرسة الثانوية إلى طوكيو ويلتقي بفتاة تمتلك قدرة غامضة على التحكم في الطقس. مع تقارب علاقتهما، يكتشفان أن لقوتها ثمناً باهظاً، مما يجبرهما على اتخاذ قرارات صعبة ستغير حياتهما إلى الأبد.',
+                videoUrl: 'https://mega.nz/embed/HRxCiaiQ#k1NSpGhwBTlKFulW6yHF74eck57Mlhev3-JLa_cXzfg'
+            },
+            'A Silent Voice': {
+                year: '2016',
+                duration: '2h 10min',
+                genre: 'Drama, Romance',
+                rating: '9.6/10',
+                description: 'يحاول شاب التكفير عن تنمره السابق على فتاة صماء. بينما يتعلم لغة الإشارة ويعيد التواصل معها، يجب على كلاهما مواجهة ماضيهما المؤلم.',
+                videoUrl: 'https://mega.nz/embed/bMhjQBAJ#2nwwmyiV7UDEmyl0DRM97SKxo5obLyHb7rbstAzib1A'
+            },
+            'Spirited Away': {
+                year: '2001',
+                duration: '2h 5min',
+                genre: 'Fantasy, Adventure',
+                rating: '9.9/10',
+                description: 'تشيهيرو) فتاة صغيرة إنتقلت مع والديها إلى المدينة وأثناء الطريق نسيّ والدها المسلك الذي يؤدي إلى المنزل الجديد فاخطأ وذهبوا من طريق آخر أدى بهم إلى مغامرة كبيرة فدخلوا إليها وعند خروجهم منها وجدوا أنفسهم أمام مساحة خضراء شاسعة أعجبهم المكان وقرروا التجوال قليلًا ثم وجدوا عددًا كبيرًا من المطاعم تعرض أطعمة لذيذة، لم يتمالك والدا (تشيهيرو) نفسيهما واخذوا يأكلان بدون إنقطاع لكن (تشهيرو) لم تأكل من ذلك الطعام وتركتهما قليلًا إلى أن يكملا طعامهما وفي طريقها صادفت فتى يقارب سنها تهيأ لها انها رأته من قبل لكن ذلك الفتى ذعر لوجودها في ذلك المكان وطلب منها الرحيل بسرعة قبل أن يحلّ الظلام، لم تفهم (تشيهيرو) ما يقصد ذلك الفتى لكنها أسرعت إلى والديها إلى المطعم لكنها وجدت أن والديها تحولا إلى خنزيرين فخافت منهما وأرادت ان تعود من حيث جاؤوا لكنها لم تستطع إذ ان تلك المساحة الخضراء أصبحت بركة عميقة. بحث ذلك الفتى عن (تشيهيرو) واخبرها ان الساحرة التي تحكم هذا المكان هي المسؤولة عما حدث لوالديها لأنهما اكلا الطعام الذي يخص ضيوفها الذين يأتون كل سنة للإستجمام وأخبرها أنها ستلاقي نفس المصير إن لم تطلب من الساحرة الشريرة (يوبابا) العمل لخدمة ضيوفها. كان اسم ذلك الفتى هو (آكو) ذهبت (تشيهيرو) إلى يوبابا فطلبت منها العمل لديها فقبلت (يوبابا) طلب (شيهرو) بصعوبة لكنها غيرت اسمها من (تشهيرو) إلى (سان) وذلك لكي تستطيع التحكم بها مثل ما تتحكم ب (آكو) والآخرين..',
+                videoUrl: 'https://mega.nz/embed/fQxzVZKS#Ewd6hvDuqwBs27wJQFv_hBvb6KeHHR7WtFPqGv6Rg-w'
+            },
+            'Howl\'s Moving Castle': {
+                year: '2004',
+                duration: '1h 59min',
+                genre: 'Fantasy, Adventure, Romance',
+                rating: '9.7/10',
+                description: 'A young woman is turned into an old woman by a witch\'s curse. She finds work as a cleaning lady in a moving castle owned by a mysterious wizard named Howl.',
+                videoUrl: 'https://mega.nz/embed/2RgyQTwL#2achBWWA1kU81RZzSLJiyiWDlYQ_BN75PN_3065r7Zk'
+            },
+            'Suki demo Kirai na Amanojaku': {
+                year: '2024',
+                duration: '2h 52min',
+                genre: 'Fantasy, Adventure',
+                rating: '9.7/10',
+                description: 'ختبر مدى عجز مراهق خجول عن رفض أي طلب عندما تجرّه فتاة عنيدة في رحلة روحانية وسط ثلوج الصيف للعثور على والدتها المفقودة.',
+                videoUrl: 'https://mega.nz/embed/zJpwCAwK#OgWJSiyO-yxtojCtmpyJdszOI7qtcBW_46uTWYqe3pA'
+            },
+            'i want eat your pancreas': {
+                year: '2018',
+                duration: '1h 46min',
+                genre: 'Drama, Romance',
+                rating: '8.5/10',
+                description: 'تدور القصة حول فتى انطوائي يكتشف عن طريق الصدفة مذكرات زميلته في الصف، ساكورا ياماوتشي، ليكتشف أنها تعاني من مرض خطير في البنكرياس ولم يتبقَ لها الكثير من الوقت للعيش. رغم اختلاف شخصياتهما تمامًا، تبدأ ساكورا في التقرب منه وتقضي معه أيامها الأخيرة، محاولة أن تجعله يرى الحياة بمنظور مختلف، بينما يبقى هو مترددًا في التعبير عن مشاعره',
+                videoUrl: 'https://mega.nz/embed/OZgxlBCC#UqsdnoqZuJrKi7BXQSDpdpPD3aMyQ6FUNQyBPwZQIdk'
+            },
+            'Natsu e no Tunnel, Sayonara no Deguchi': {
+                year: '2018',
+                duration: '1h 22min',
+                genre: 'Drama, Romance,Mystery ',
+                rating: '8.5/10',
+                description: 'سمع “كاورو تونو” اشاعة تقول ان قوانين المكان والزمان لا تنطبق على نفق “اوراشيما”. إذا وجدته، اعبر من خلاله وستجد رغبة قلبك على الجانب الآخر، مقابل سنوات من حياتك. ذات ليلة، “كاورو” فجأة يجد نفسه يقف أمام النفق، والذي يبدو بشكل مفاجئ مثل الذي تصفه الشائعات. وهو يفكر في “كارين”، الأخت التي فقدها في حادث قبل خمس سنوات.',
+                videoUrl: 'https://mega.nz/embed/bVgSETTA#nBG3_kYKaZLrwAYRZSOk_tWKrYpl0Fwf3VKJCMV9qs8'
+            },
+            'Suzume': {
+                year: '2022',
+                duration: '2h 2min',
+                genre: 'Fantasy, Adventure',
+                rating: '9.4/10',
+                description: 'تلتقي فتاة في السابعة عشرة من عمرها من مدينة هادئة في كيوشو بشاب يبحث عن أبواب. معًا يسافران عبر اليابان، مغلقين أبوابًا غامضة تسبب الكوارث..',
+                videoUrl: 'https://mega.nz/embed/SIJk1a5T#rpTjD1X7gN5LPrUxtRZtmOaUDdtBhXyKX-Wr7Ba3UXA'
+            },
+            'Garden of Words': {
+                year: '2013',
+                duration: '46min',
+                genre: 'Romance, Drama',
+                rating: '9.3/10',
+                description: 'يجد صبي في الخامسة عشرة من عمره وامرأة في السابعة والعشرين من عمرها صداقة غير متوقعة في يوم ممطر في حديقة شينجوكو غيون الوطنية',
+                videoUrl: 'https://mega.nz/embed/jQZkFSqR#XInCfosmaGGX558fv7TD3QF5pCZMiGeoVNfVxYuzn5Y'
+            },
+            'Violet Evergarden Gaiden: Eien to Jidou Shuki Ningyou': {
+                year: '2020',
+                duration: '2h 20min',
+                genre: 'Drama, Fantasy',
+                rating: '9.5/10',
+                description: 'يزابيلا”، ابنة عائلة “يورك” النبيلة، مسجلة في أكاديمية للفتيات ويتم إعدادها لتصبح سيدة نبيلة مؤهلة.لاحظت عائلتها أنها تكافح في دروسها وقررت توظيف “فايوريت ايفاغادين” شخصيًا لتعليمها.',
+              videoUrl: 'https://mega.nz/embed/aEwQ0aRC#I2w41tWolD90MD9cfiDekTIF0rcgJmYIXFtxBehvm0M'
+            },
+            'Josee, the Tiger and the Fish': {
+                year: '2020',
+                duration: '1h 38min',
+                genre: 'Romance, Drama',
+                rating: '9.2/10',
+                description: 'القصة تدور حول العلاقة بين تسونيو و جوزي. تسونيو طالب جامعي و جوزي فتاة شابة نادرًا ما تخرج من المنزل بنفسها لكونها لا تستطيع المشي. يتقابل الاثنان عندما تقوم تأخذ جدة جوزي لنزهة في الصباح.',
+                videoUrl: 'https://mega.nz/embed/PQJVSLAQ#42O8DUf4Mx3PnKlcL1c8urAl1JuleH286RS5IWi3Xh4'
+            },
+            'Detective Conan Movie 24: Hiiro no Dangan': {
+                year: '2018',
+                duration: '1h 55min',
+                genre: 'Action, Drama',
+                rating: '9.4/10',
+                description: 'يركز الفيلم على وكيل مكتب التحقيقات الفيدرالي “اكاي شويشي”، وشقيقه الأصغر ولاعب الـ “شوغي” المحترف “هانيدا شوكيشي”، وأخته الصغرى والمحققة في المدرسة الثانوية “سيرا ماسومي”، ووالدته “سيرا ماري”، و “ايدوغاوا كونان” نفسه.“الرصاصة اليابانية”، أول قطار خطي في العالم فائق التوصيل بأنبوب مفرغ، تم بناؤه بأحدث التقنيات اليابانية وتوقيته ليتزامن مع احتفالات افتتاح (WSG).من المقرر أن ينطلق القطار من محطة “شين ناغويا” إلى محطة “طوكيوولكن، تقع حادثة غريبة خلال حفل أقامه رعاة كبار مشهورون، مما أدى إلى سلسلة من عمليات الاختطاف لكبار المسؤولين التنفيذيين.',
+                videoUrl: 'https://mega.nz/embed/3d5TiByA#JZF8Y3Og-rTlraSUTCKdtwtIgIFzcBxXtCXwSW4AzWo'
+            },
+            'Jujutsu Kaisen 0': {
+                year: '2018',
+                duration: '1h 44min',
+                genre: 'Fantasy, Drama',
+                rating: '9.4/10',
+                description: 'اوكوتسو يوتا” مسكون. منذ وفاة صديقة طفولته “ريكا” في حادث مروري، ظل شبحها عالقًا معه. لكن روحها لا تظهر كما عرفها “يوتا” من قبل. بدلاً من ذلك، تظهر ككيان وحشي وقوي يحميه بشدة. غير قادر على السيطرة على سلوك “ريكا” العنيف، يجعل “يوتا” عاجز عن وقف إراقة الدماء الناجم عن انتقامها الوحشي. نتيجة لذلك، عندما ألقي القبض عليه من قبل سحرة “جوجوتسو”، حماة العالم السريين المدربين على محاربة الكيانات مثل “ريكا”، يرغب “يوتا” في أن يكون معزولًا تمامًا حتى لا يتأذى أي شخص آخر. ومع ذلك، فإن سيد السحر “غوجو ساتورو”، لديه خطط مختلفة بالنسبة له، سينضم إلى مدرسة “جوجوتسو” الثانوية ويتعلم التحكم في “ريكا” لمساعدة الناس. الآن في السنة الأولى في هذه المدرسة، يبدأ “يوتا” في تعلم فنون “جوجوتسو” ومكافحة الكائنات الخبيثة. إلى جانب زملائه الجدد “زينين ماكي”، خبير أسلحة “جوجوتسو”. و “اينوماكي توغي”، ملقي التعاويذ الذي يستخدم كلماته كأسلحة. و“باندا”، الذي يبدو أنه دب باندا يمشي ويتحدث. ليبدأ “يوتا” في العثور على مكانه في العالم، ولأول مرة، يشعر بالراحة مع قدراته.',
+                videoUrl: 'https://mega.nz/embed/iR40hawR#GJDIzWQrubT3DjTqLRITZn2QNwEMpNhOBRE1p8Hdbj4'
+            },
+            'Demon Slayer: Mugen Train': {
+                year: '2020',
+                duration: '1h 57min',
+                genre: 'Action, Fantasy',
+                rating: '9.5/10',
+                description: '(قاتل الشياطين: قطار اللانهاية) هو فيلم أنمي ياباني صدر عام 2020، وهو تكملة مباشرة لأحداث مسلسل . يتبع الفيلم تانجيرو كامادو ورفاقه زينيتسو وإينوسكي، برفقة هاشيرا اللهب، كيوجورو رينغوكو، أثناء مهمتهم للتحقيق في سلسلة من الاختفاءات الغامضة على متن قطار اللانهاية. سرعان ما يكتشفون أن القطار مسيطر عليه من قبل أحد الشياطين القوية، إنمو، وهو أحد الأعضاء الأوائل في القمر الشيطاني، الذي يخطط لإيقاعهم في كابوس أبدي. يواجه الأبطال معركة شرسة لإنقاذ الركاب وهزيمة الشر الذي يهدد حياتهم.  ',
+                videoUrl: 'https://mega.nz/embed/fYhCnQzQ#LWBFMhkVOd36GmnHW-HipTd1odTBJ1LmGT63SlJaWMw'
+            }
+        };
+        window.addEventListener('DOMContentLoaded', () => {
+            const movieData = JSON.parse(localStorage.getItem('selectedMovie'));
+            movieTitle=movieData.title
+            const movie = movieDatta[movieTitle];
+            if (movie) {
+                    // Update video source
+                    videoPlayer.src = movie.videoUrl;
+
+                    // Update title
+                    titleElement.textContent = movieTitle;
+                    
+                    // Update meta information
+                    metaInfo.innerHTML = `
+                        <div class="meta-item">
+                            <span>Year: ${movie.year}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span>Duration: ${movie.duration}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span>Genre: ${movie.genre}</span>
+                        </div>
+                        <div class="meta-item rating">
+                            <span>★ ${movie.rating}</span>
+                        </div>
+                    `;
+
+                    // Update description
+                    description.textContent = movie.description;
+
+                    // Scroll to top
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                } else {
+                    console.error(`Movie data not found for: ${movieTitle}`);
+                }
+        });
+
+        // Update the click handler to use the improved movieData
+        recommendationCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const movieTitle = card.querySelector('.recommendation-title').textContent;
+                const movie = movieDatta[movieTitle];
+
+                if (movie) {
+                    // Update video source
+                    videoPlayer.src = movie.videoUrl;
+
+                    // Update title
+                    titleElement.textContent = movieTitle;
+                    
+                    // Update meta information
+                    metaInfo.innerHTML = `
+                        <div class="meta-item">
+                            <span>Year: ${movie.year}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span>Duration: ${movie.duration}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span>Genre: ${movie.genre}</span>
+                        </div>
+                        <div class="meta-item rating">
+                            <span>★ ${movie.rating}</span>
+                        </div>
+                    `;
+
+                    // Update description
+                    description.textContent = movie.description;
+
+                    // Scroll to top
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                } else {
+                    console.error(`Movie data not found for: ${movieTitle}`);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+

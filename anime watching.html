@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AnimeFlix - Watch Anime Online</title>
+    <style>
+        /* Base styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #0a0a0a;
+            color: #ffffff;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(to bottom, #000000, transparent);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            transition: background 0.3s;
+        }
+
+        header.scrolled {
+            background: #000000;
+            box-shadow: 0 2px 15px rgba(255, 0, 0, 0.2);
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ff0000;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-menu a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #ff0000;
+            transition: width 0.3s;
+        }
+
+        .nav-menu a:hover::after {
+            width: 100%;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding-top: 60px;
+        }
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+        }
+
+        .video-player {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Episode Navigation */
+        .episode-navigation {
+            background: #1a1a1a;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-button {
+            padding: 0.5rem 1rem;
+            background: #ff0000;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .nav-button:disabled {
+            background: #333;
+            cursor: not-allowed;
+        }
+
+        /* Content Layout */
+        .content-wrapper {
+            max-width: 1200px;
+            margin: 1rem auto;
+            padding: 0 1rem;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 1rem;
+        }
+
+        /* Series Info */
+        .series-info {
+            background: #1a1a1a;
+            padding: 1rem;
+        }
+
+        /* Episode List */
+        .episodes-container {
+            background: #1a1a1a;
+            padding: 1rem;
+        }
+
+        .episode-item {
+            padding: 0.5rem;
+            background: #2a2a2a;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+        }
+
+        .episode-item.active {
+            background: #ff0000;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-container">
+            <a href="#" class="logo">AnimeFlix</a>
+            <nav class="nav-menu">
+                <a href="index.html">Home</a>
+                <a href="anime-list.html">Anime List</a>
+                <a href="film.html">Movies</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="video-container">
+            <iframe id="videoPlayer" class="video-player" frameborder="0" allowfullscreen></iframe>
+        </div>
+
+        <div class="episode-navigation">
+            <button id="prevButton" class="nav-button">← Previous Episode</button>
+            <div id="episodeInfo"></div>
+            <button id="nextButton" class="nav-button">Next Episode →</button>
+        </div>
+
+        <div class="content-wrapper">
+            <div class="series-info">
+                <h1 id="seriesTitle"></h1>
+                <p id="seriesDescription"></p>
+            </div>
+
+            <div class="episodes-container">
+                <h2>Episodes</h2>
+                <div id="episodeList"></div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Sample data (replace with your actual data)
+        const seriesData = {
+            sololeveling: {
+                title: "Solo Leveling",
+                description: "In a world where hunters with special abilities battle dangerous monsters, Sung Jin-Woo is known as the world's weakest hunter. After a near-death experience, he awakens a unique ability that allows him to level up and become stronger with each battle.",
+                episodes: [
+                    { number: 1, title: "I'm Used to It", url: "https://mega.nz/embed/2FhBTKSA#IUC7C_8c081i2t1Ozq2mRuApdupPuXmVUGQN4iQe5tM" },
+                    { number: 2, title: "If I Had One More Chance", url: "https://mega.nz/embed/rFxXjJhZ#ZeLlVredmO8LAawIy6Vh2dShnu6oAsKJHGnKImNr9w0" },
+                    { number: 3, title: "The Strength of the Weak", url: "https://mega.nz/embed/vAwjTazT#uczP5UOZimphRQraiP1tP0TY2uF0EcmcXkGNMURZQC8" },
+                    { number: 4, title: "My First Attribute", url: "https://mega.nz/embed/bIZiGJqK#Rnoo8_psPME3BWERj20WP80XUdlXbEiAl7WU8lMdZhM" },
+                    { number: 5, title: "A Pretty Good Deal", url: "https://mega.nz/embed/bIZiGJqK#Rnoo8_psPME3BWERj20WP80XUdlXbEiAl7WU8lMdZhM" }
+                ]
+            },
+            dandadan: {
+                title: "Dandadan",
+                description: "Momo Ayase strikes up an unusual friendship with her classmate Okarun, and together they get wrapped up in mysterious events involving ghosts, aliens, and more.",
+                episodes: [
+                    { number: 1, title: "", url: "https://mega.nz/embed/XVZjQKYI#H1dgN_wUx4Pm03megpgcTgH0rx4tgct-yg-ucVurgig" },
+                    { number: 2, title: "", url: "https://mega.nz/embed/2QBmUDbQ#xWFrB3m2nqbg5Etwp-bvJXJU8nfx0QN-cmqE7SnmtBA" },
+                    { number: 3, title: "", url: "https://mega.nz/embed/iQBnUJ5Y#StbO32nixYO13wgXocJGSF_bU6PdNxwcVju75LVnHE0" },
+                    { number: 4, title: "", url: "https://mega.nz/embed/jdAGTaIZ#JxSfyq0HC966Tkw8BAHHOujP6b8XkAvjjrNgTa7jito" },
+                    { number: 5, title: "", url: "https://mega.nz/embed/iBhCWZiC#g_KaejEzscTRqRe3Md-aJB1BWaeqkwi_Vsqm1OoyPYU" },
+                    { number: 6, title: "", url: "https://mega.nz/embed/mMI3HbpS#3HglHdcsbdmVreWzHKEp4rfsrx2AsGKHfjK4xGnnmRY" },
+                    { number: 7, title: "", url: "https://mega.nz/embed/jNZQXQKJ#ZF3TU7gNXCQ_Qc61jiy6SVhygQrd7UZvJjJCZcSmPME" },
+                    { number: 8, title: "", url: "https://mega.nz/embed/fUZDkbhJ#L7jnuqJH_zCoo-dMgHzeUY20ZzISUMyADDjtj2729K0" },
+                    { number: 9, title: "", url: "https://mega.nz/embed/6YBjHZ6C#WjGdD7eIbOoEkv5yEV5Ld-ksW-tnjlyiBMCwD2PI5aE" },
+                    { number: 10, title: "", url: "https://mega.nz/embed/7VhXRJwC#vKgCMjze7NPIkICPbXhz8OJ2HH7jCxDKtsNMctmYgrk" },
+                    { number: 11, title: "", url: "https://mega.nz/embed/PZgHUY5b#DK1ad-ziekpMRDNx6BMskq5WvB4qIMALholGZDsNZsc" },
+                    { number: 12, title: "", url: "https://mega.nz/embed/mIACHSZQ#mirLJ6yQ1qGylH5hDX7uJdfzp1c34tIcD9A7ZDmqjzQ" },
+                ]
+            },
+            magus: {
+                title: "عروس الساحر القديم",
+                description: "تشيزي هاتوري، فتاة يابانية تبلغ من العمر 15 عامًا، تُباع في مزاد لرجل طويل القامة يرتدي قناعًا. يتضح أن هذا الرجل ساحر، فيأخذ تشيزي إلى منزله في إنجلترا ويجعلها تلميذته وعروسه.",
+                episodes: [
+                    { number: 1, title: "أمطار أبريل تجلب زهور مايو", url: "https://mega.nz/embed/5cBk3aJR#NwhEx4zAuVDDJB6ty703Z-7XNRAC7kt541OMJlJuDCY" },
+                    { number: 2, title: "اليوم الواحد يساوي غدًا اثنين", url: "https://mega.nz/embed/9Ih3gDIY#3Ep-XaCuVrHYytePsoSYeRnMA7sncGzwUgxD4cEvOQw" },
+                    { number: 3, title: "التوازن لا يميز بين الذهب والرصاص", url: "https://mega.nz/embed/QQgQlJqK#EVapBua9MWoTCL0TVhNv18C_ej8c1nOfgRwst6Bg-P0" },
+                    { number: 4, title: "يجب أن يكون لكل شيء بداية", url: "https://mega.nz/embed/cZRAQRCT#jQinXXVJGPwbQ9Hvpb6lxJUwLILOnXRM7_PnWuNpKxQ" },
+                    { number: 5, title: "الحب ينتصر على كل شيء", url: "https://mega.nz/embed/sMJVyLIB#nLUqBdDwcnigJ5_9k7mI-37ESuMS5vTHbJKw51XxLF0" },
+                    { number: 6, title: "ملكة الجنيات", url: "https://mega.nz/embed/JQRDzZyB#zghwrT2zqSQOR_-sEqG17dEOE5D9-M0vpOQorAw1CUg" },
+                    { number: 7, title: "عند ذكر الشيطان، يظهر بالتأكيد", url: "https://mega.nz/embed/kFwWDYpJ#p9iX8Pyzl2W7OLGPwEnsE8d7k7uL2FkHxKWuU1r8suE" },
+                    { number: 8, title: "دع الكلاب النائمة تستريح", url: "https://mega.nz/embed/UV5i0JjD#aEZ-Rev_Q8L5JXvbsylHAg3p8ADQroZSr9tb3V3G-Qk" },
+                    { number: 9, title: "لا يوجد أصم أكثر من الذي لا يريد أن يسمع", url: "https://mega.nz/embed/Ycg0DZCY#K4IjyuuDhs_xtGMxEyNiEbEvIyqLjsxZGKsfJv1nG3U" },
+                    { number: 10, title: "نعيش ونتعلم", url: "https://mega.nz/embed/EEYhxDZB#wxuZEd-Ch3c6MoN1KfdXB2ovVPwioH92h17clAthhuo" },
+                    { number: 11, title: "العشاق يركضون دائمًا قبل الساعة", url: "https://mega.nz/embed/MMRARKSC#mdJWjXFpbKBnDGMKTY_pR71UbUmX4spnS4-3jIfSI40" },
+                    { number: 12, title: "من الأفضل أن تسأل عن الطريق بدلاً من أن تضل", url: "https://mega.nz/embed/xAQDUDYT#zZOfACBLTB7fPtBA14EUtOD-gjmdgdxyUkxD2KsdGFg" }
+                ]
+            },
+            elite: {
+                title: "فصل النخبة - الموسم الثالث",
+                description: "تدور القصة حول أكاديمية كودو إيكوسي الثانوية المتقدمة، حيث يتم تصنيف الطلاب بناءً على قدراتهم الأكاديمية والاجتماعية. كيوتاكا أيانوكوجي، طالب في الصف D، يخفي ذكاءً استثنائياً بينما يتلاعب بالأحداث من وراء الكواليس لتحقيق أهدافه.",
+                episodes: [
+                    { number: 1, title: "البداية تحدد كل شيء", url: "https://mega.nz/embed/BIxDjRoR#YvBDd_hFZ1r7TwjTecUCTGwXd15Cq3pdE5auGao30bs" },
+                    { number: 2, title: "الذكاء وحده لا يكفي للنجاح", url: "https://mega.nz/embed/VUBn1ZaC#EWwmBzKlvvGQvD5oheGqQwoo-5wjfLLw4BLzUSfTVHw" },
+                    { number: 3, title: "في عالم مليء بالمكائد، الهدوء قوة", url: "https://mega.nz/embed/EBZF3aoL#NHhQ4jLS17c0YognFWbGpZkMKRBpM20VfcpXIjf2V20" },
+                    { number: 4, title: "الثقة لا تُمنح، بل تُكتسب", url: "https://mega.nz/embed/wVx1GBIQ#SFoDLNeGMpccoOMOm86G0K4MZTbWiA3mzLsBaMSFbA4" },
+                    { number: 5, title: "المواجهة الحاسمة تقترب", url: "https://mega.nz/embed/VNwzCZZQ#a1oGRxeXBMsEpot2R5Gfj5zWKGvvExMN7TKzi8iKXB0" },
+                    { number: 6, title: "القوة الحقيقية تكمن في التخطيط", url: "https://mega.nz/embed/sJ5BnRwC#nEsVpQ_KIYg1guBi-LF0a0S63OuBwLqf7ARwOdbQyjo" },
+                    { number: 7, title: "كل شخص لديه نقطة ضعف", url: "https://mega.nz/embed/hBJ2BKIK#7gXfD4gPRg65Ny61aduKRNpJnxni_wKEKbg7jSyf57k" },
+                    { number: 8, title: "القرارات الصعبة تصنع القادة", url: "https://mega.nz/embed/sZwHmCKQ#mcMOc29f47ushhII0bmvyddf__oD9F5jffTH95DBOBw" },
+                    { number: 9, title: "من يسيطر على المعلومات يسيطر على اللعبة", url: "https://mega.nz/embed/QcYH0QbB#9TgBHhmNK0BrTekzPCiCJyx_vyr1-4W4ax3kU-CkXB4" },
+                    { number: 10, title: "الصراع يصل إلى ذروته", url: "https://mega.nz/embed/kd42TBCK#bGTV5osKWoZRz5QbrkajEhhWK3RiKJKI16Mjn3YsLMA" },
+                    { number: 11, title: "الخسارة أحيانًا جزء من الفوز", url: "https://mega.nz/embed/xE5E1RYQ#vjxePs2QKTN2nWfnIBIyjbiU5jnaOLQaTCglFfvmXKc" },
+                    { number: 12, title: "النهاية ليست سوى بداية جديدة", url: "https://mega.nz/embed/5Qgx0BLQ#4NNMuf5zTxOd_w3wln5ZpgNK3HBvEfCS0sFQOBeQTeE" },
+                    { number: 13, title: "الخيار الأخير يحدد المستقبل", url: "https://mega.nz/embed/VEh0Saab#R_yq0WW0wmODQglvRIpY_N3VTVsBr6ZEJn7zUjLpiCk" }
+                ]
+            },
+            days: {
+                title: "365 يومًا حتى الزفاف",
+                description:
+                    "إيما تاتشيبانا وتاكومي نيهِي، صديقان منذ الطفولة تحولا إلى عشاق، يقرران الزواج. ومع ذلك، يواجهان تحديًا فريدًا: يجب أن يعيشان منفصلين لمدة عام قبل زفافهما، مما يختبر علاقتهما ونموهما الشخصي.",
+                "episodes": [
+                    { "number": 1, "title": "عرض الزواج", "url": "https://mega.nz/embed/XNJiBCqL#pE6JYDMhwUOBMPWNH1Tx-bPACS2l6tw1ECMxvNAkSD4" },
+                    { "number": 2, "title": "طرق منفصلة", "url": "https://mega.nz/embed/eMBT1bjT#0NXtpBgXm-OUtiZnM8EP2OteGSPdmoEHGPwNzC0ay9k" },
+                    { "number": 3, "title": "بدايات جديدة", "url": "https://mega.nz/embed/SB4FwYKC#HbhxJmZNG3YUnalNxrAf6HoJzzLATkJuOfU2uskjVlY" },
+                    { "number": 4, "title": "حب عن بعد", "url": "https://mega.nz/embed/TVAGTRyY#K83jTSBaGaGw6e00L9rLGezzZsSGJjSUhXYKbmRyeiw" },
+                    { "number": 5, "title": "تحديات غير متوقعة", "url": "https://mega.nz/embed/bZYWjJoY#oRm9qF4vgehoqv7VH37YozzW8ycXMW_PhF2w1jr4dBY" },
+                    { "number": 6, "title": "تأمل في منتصف الطريق", "url": "https://mega.nz/embed/aIQB2RyZ#l_y_9gipFePpWtgN1b6C4KSoLOmL9HSGltby1oTzGcc" },
+                    { "number": 7, "title": "آلام النمو", "url": "https://mega.nz/embed/GRpzwLBI#xMwlU_wS1z8M-q0phfk83wRKpmaJjdeOeUKongOJjww" },
+                    { "number": 8, "title": "لقاءات وكشف الأسرار", "url": "https://mega.nz/embed/WEATEQiI#IJWpmttMUhGqY8PWfhYZMlX_yaq6aEFj7Lva8ko-9ws" },
+                    { "number": 9, "title": "شكوك وقرارات", "url": "https://mega.nz/embed/2EwBDCSR#ZA9_EpkzPrm8aDg6kyBuHn8aokDHKcjTT6jkgWSGsqY" },
+                    { "number": 10, "title": "المرحلة الأخيرة", "url": "https://mega.nz/embed/CQBFlDQB#uyVGKnUfgjoZWh0KkHwkJr0nUbYxbSQTCQwOkdyBwSM" },
+                    { "number": 11, "title": "التقارب من جديد", "url": "https://mega.nz/embed/nEA1kbCQ#_Kw-HU1A7s1sBRbOZi1EpPQyKklWda5jW3M5MhjT6ko" },
+                    { "number": 12, "title": "اليوم الكبير", "url": "https://mega.nz/embed/nRJXgYDL#pM55DLVmy4HhZMiBvgSxcsABsrd7xO_3Deqb1PL9WA4" }
+                ]
+            },
+            box: {
+                title: "Blue Box",
+                description: "Taiki Inomata, a badminton player, has a crush on his basketball-playing senpai Chinatsu Kano. When circumstances lead to them living under the same roof, Taiki must navigate his feelings while both pursue their athletic dreams.",
+                episodes: [
+                    { number: 1, title: "Morning Practice", url: "https://example.com/bluebox-ep1" },
+                    { number: 2, title: "Under One Roof", url: "https://example.com/bluebox-ep2" },
+                    { number: 3, title: "The Tournament Begins", url: "https://example.com/bluebox-ep3" },
+                    { number: 4, title: "Practice Makes Perfect", url: "https://example.com/bluebox-ep4" },
+                    { number: 5, title: "Mixed Feelings", url: "https://example.com/bluebox-ep5" },
+                    { number: 6, title: "Team Spirit", url: "https://example.com/bluebox-ep6" },
+                    { number: 7, title: "The Challenge", url: "https://example.com/bluebox-ep7" },
+                    { number: 8, title: "Growing Stronger", url: "https://example.com/bluebox-ep8" },
+                    { number: 9, title: "New Rivals", url: "https://example.com/bluebox-ep9" },
+                    { number: 10, title: "The Finals Approach", url: "https://example.com/bluebox-ep10" },
+                    { number: 11, title: "Decision Time", url: "https://example.com/bluebox-ep11" },
+                    { number: 12, title: "Moving Forward", url: "https://example.com/bluebox-ep12" }
+                ],
+            },
+            crusade: {
+                title: "Our Last Crusade or the Rise of a New World",
+                description: "In a world where the Empire and the Nebulis Sovereignty are at war, a gifted swordsman from the Empire meets a powerful witch from the rival nation. Despite being enemies, they form an unlikely bond.",
+                episodes: [
+                    { number: 1, title: "The Two Nations at War", url: "https://example.com/crusade-ep1" },
+                    { number: 2, title: "A Chance Encounter", url: "https://example.com/crusade-ep2" },
+                    { number: 3, title: "The Witch and the Swordsman", url: "https://example.com/crusade-ep3" },
+                    { number: 4, title: "Secret Meetings", url: "https://example.com/crusade-ep4" },
+                    { number: 5, title: "The Truth of the Past", url: "https://example.com/crusade-ep5" },
+                    { number: 6, title: "Bonds of Trust", url: "https://example.com/crusade-ep6" },
+                    { number: 7, title: "The Power of Unity", url: "https://example.com/crusade-ep7" },
+                    { number: 8, title: "Dangerous Alliance", url: "https://example.com/crusade-ep8" },
+                    { number: 9, title: "Hidden Enemies", url: "https://example.com/crusade-ep9" },
+                    { number: 10, title: "The Price of Peace", url: "https://example.com/crusade-ep10" },
+                    { number: 11, title: "A New Hope", url: "https://example.com/crusade-ep11" },
+                    { number: 12, title: "The Future We Choose", url: "https://example.com/crusade-ep12" }
+                ],
+            },
+
+
+            horimiya: {
+                title: "Horimiya",
+                description: "A sweet romantic story about two high school students who discover each other's hidden sides. Kyouko Hori is a bright and popular student, while Izumi Miyamura is seen as a gloomy otaku. When they meet outside of school, they realize there's more to each other than meets the eye.",
+                episodes: [
+                    { number: 1, title: "A Tiny Happenstance", url: "https://mega.nz/embed/eZwmgIDQ#LiNOhNV4WD20_6zyjn37A_yiL6sfO_9AhmI9Tjqi4dA" },
+                    { number: 2, title: "You Wear More Than One Face", url: "https://mega.nz/embed/vEBWkaKR#xNP_XORNg81BSk2zJq0vpTWqcKwGzwJ6tvMLZSifj8g" },
+                    { number: 3, title: "That's Why It's Okay", url: "https://mega.nz/embed/bI5CHIjJ#dLpGl8wBV9V_nbiQWa-CRxEK8hYL0EQAovGUdGzTiGg" },
+                    { number: 4, title: "Everybody Loves Somebody", url: "https://mega.nz/embed/mMAHhQzI#aJ4xbEvdjIMUzfg7AVEkRp7BGgAe2erTJijDqIV0SZ0" },
+                    { number: 5, title: "I Can't Say It Out Loud", url: "https://mega.nz/embed/XJgWXYJA#mM2ELMZSu9C2kdew5JfBj5h0BTC_tBndAner2OWUTM4" },
+                    { number: 6, title: "This Summer's Going to Be a Hot One", url: "https://mega.nz/embed/qBZHXShS#PGZXaEkBmrhplAFE-EWpbLlqJLgv_EKrXOyjK51QW_U" },
+                    { number: 7, title: "You're Here, I'm Here", url: "https://mega.nz/embed/TApGRI5Q#OpEQ-LqAN9eioP96Ba7CytwkqMtSH66LNPasuYdA64g" },
+                    { number: 8, title: "The Truth Deception Reveals", url: "https://mega.nz/embed/7Y4n1baS#kNe-9vsweN09YMFzNscEKGCKNJVT6MIAaBv6FfDSn78" },
+                    { number: 9, title: "It's Hard, but Not Impossible", url: "https://mega.nz/embed/nMRU1BZY#5SSVEfngDKRZ6cvy9JI9-PbCBz7IT7PVJRGWT7oVyzw" },
+                    { number: 10, title: "Until the Snow Melts", url: "https://mega.nz/embed/zBIinCSD#7NtXRsGATN5tQKDBFMLUmYPbtTBzTymuUV_rCnwaZ5g" },
+                    { number: 11, title: "It May Seem Like Hate", url: "https://mega.nz/embed/7R4iXYbJ#2nM3ywiYnmV5RFqAQ1j2GpkUnyE2NiAia2zsVF4jdhI" },
+                    { number: 12, title: "Hitherto, and Forevermore", url: "https://mega.nz/embed/mUJ3BKSI#MtaliF9Sa2AgRxIEv96ieUY0fSdm9xjFcnfDc5UFsM0" },
+                    { number: 13, title: "I Would Gift You the Sky", url: "https://mega.nz/embed/6MgAlAjD#u5T6PfuY9qCsXpLh37Rsyg_z1oKkvhmPlB-2IhKsVhM" }
+                ]
+            },
+            "black butler": {
+                title: "Black Butler",
+                description: "In Victorian-era London, a young boy named Ciel Phantomhive, the Queen's Guard Dog, investigates criminal cases while running the Phantomhive household with his demonic butler, Sebastian Michaelis, who is bound by a contract to help Ciel achieve his revenge.",
+                episodes: [
+                    { number: 1, title: "His Butler, Able", url: "https://example.com/black-butler-ep1" },
+                    { number: 2, title: "His Butler, Strongest", url: "https://example.com/black-butler-ep2" },
+                    { number: 3, title: "His Butler, Omnipotent", url: "https://example.com/black-butler-ep3" },
+                    { number: 4, title: "His Butler, Capricious", url: "https://example.com/black-butler-ep4" },
+                    { number: 5, title: "His Butler, Chance Encounter", url: "https://example.com/black-butler-ep5" },
+                    { number: 6, title: "His Butler, At the Funeral", url: "https://example.com/black-butler-ep6" },
+                    { number: 7, title: "His Butler, Merrymaking", url: "https://example.com/black-butler-ep7" },
+                    { number: 8, title: "His Butler, Training", url: "https://example.com/black-butler-ep8" },
+                    { number: 9, title: "His Butler, Phantom Image", url: "https://example.com/black-butler-ep9" },
+                    { number: 10, title: "His Butler, On Ice", url: "https://example.com/black-butler-ep10" },
+                    { number: 11, title: "His Butler, However You Please", url: "https://example.com/black-butler-ep11" },
+                    { number: 12, title: "His Butler, Forlorn", url: "https://example.com/black-butler-ep12" },
+                    { number: 13, title: "His Butler, Freeloader", url: "https://example.com/black-butler-ep13" },
+                    { number: 14, title: "His Butler, Supremely Talented", url: "https://example.com/black-butler-ep14" },
+                    { number: 15, title: "His Butler, Competing", url: "https://example.com/black-butler-ep15" },
+                    { number: 16, title: "His Butler, Taking Flight", url: "https://example.com/black-butler-ep16" },
+                    { number: 17, title: "His Butler, Offering", url: "https://example.com/black-butler-ep17" },
+                    { number: 18, title: "His Butler, Transferred", url: "https://example.com/black-butler-ep18" },
+                    { number: 19, title: "His Butler, Imprisoned", url: "https://example.com/black-butler-ep19" },
+                    { number: 20, title: "His Butler, Escaping", url: "https://example.com/black-butler-ep20" },
+                    { number: 21, title: "His Butler, Disturbed", url: "https://example.com/black-butler-ep21" },
+                    { number: 22, title: "His Butler, Dissolution", url: "https://example.com/black-butler-ep22" },
+                    { number: 23, title: "His Butler, Up in Flames", url: "https://example.com/black-butler-ep23" },
+                    { number: 24, title: "His Butler, Fluent", url: "https://example.com/black-butler-ep24" }
+                ]
+            },
+            sevenmagicalswords: {
+                title: "The Seven Magical Swords",
+                description: "At Kimberly Magic Academy, students train to become powerful mages while wielding mysterious magical swords. The story follows a group of students as they uncover the dark secrets behind these legendary weapons and face increasingly dangerous threats.",
+                episodes: [
+                    { number: 1, title: "The Seven Swords", url: "https://example.com/seven-swords-ep1" },
+                    { number: 2, title: "Magic Academy", url: "https://example.com/seven-swords-ep2" },
+                    { number: 3, title: "Hidden Powers", url: "https://example.com/seven-swords-ep3" },
+                    { number: 4, title: "The First Trial", url: "https://example.com/seven-swords-ep4" },
+                    { number: 5, title: "Bonds of Friendship", url: "https://example.com/seven-swords-ep5" },
+                    { number: 6, title: "Dark Secrets", url: "https://example.com/seven-swords-ep6" },
+                    { number: 7, title: "The Awakening", url: "https://example.com/seven-swords-ep7" },
+                    { number: 8, title: "Betrayal", url: "https://example.com/seven-swords-ep8" },
+                    { number: 9, title: "The Truth Revealed", url: "https://example.com/seven-swords-ep9" },
+                    { number: 10, title: "Battle for the Academy", url: "https://example.com/seven-swords-ep10" },
+                    { number: 11, title: "The Seventh Sword", url: "https://example.com/seven-swords-ep11" },
+                    { number: 12, title: "The Final Battle", url: "https://example.com/seven-swords-ep12" }
+                ]
+            },
+
+            witch: {
+                title: "احرق الساحرة",
+                description:
+                    "في لندن العكسية، تعمل الساحرتان نويل نيهاشي ونيني سبانجكول لصالح وينج بايند، وهي منظمة تحمي وتدير التنانين. أثناء قيامهما بواجباتهما، تواجهان تهديدات خارقة للطبيعة وتكشفان أسرار عالمهما، كل ذلك أثناء التنقل في العلاقة المعقدة بين البشر والتنانين.",
+                episodes: [
+                    { number: 1, title: "الساحرة والتنين", url: "https://example.com/burn-the-witch-ep1" },
+                    { number: 2, title: "بدلة الإخفاء", url: "https://example.com/burn-the-witch-ep2" },
+                    { number: 3, title: "الأحبار", url: "https://example.com/burn-the-witch-ep3" },
+                    { number: 4, title: "أسرار وينج بايند", url: "https://example.com/burn-the-witch-ep4" },
+                    { number: 5, title: "التنين الأسود", url: "https://example.com/burn-the-witch-ep5" },
+                    { number: 6, title: "مواجهة في السماء", url: "https://example.com/burn-the-witch-ep6" },
+                    { number: 7, title: "الساحرة المفقودة", url: "https://example.com/burn-the-witch-ep7" },
+                    { number: 8, title: "أصداء الماضي", url: "https://example.com/burn-the-witch-ep8" },
+                    { number: 9, title: "سر القوة الخفية", url: "https://example.com/burn-the-witch-ep9" },
+                    { number: 10, title: "تحالف غير متوقع", url: "https://example.com/burn-the-witch-ep10" },
+                    { number: 11, title: "معركة المصير", url: "https://example.com/burn-the-witch-ep11" },
+                    { number: 12, title: "مستقبل لندن العكسية", url: "https://example.com/burn-the-witch-ep12" },
+                ]
+            },
+            "unsuccessfulyetstrongestsage": {
+                title: "Akashic Records of Bastard Magic Instructor",
+                description: "Glenn Radars Records of Bastard Magic Instructois appointed as a substitute instructor at the prestigious Alzano Imperial Magic Academy. Despite his lazy and incompetent appearance, he shows his students a new perspective on magic while hiding his mysterious past.",
+                episodes: [
+                    { number: 1, title: "The Unmotivated Bastard", url: "https://example.com/akashic-ep1" },
+                    { number: 2, title: "Magic Games", url: "https://example.com/akashic-ep2" },
+                    { number: 3, title: "The Real Teacher", url: "https://example.com/akashic-ep3" },
+                    { number: 4, title: "The Fool's Finale", url: "https://example.com/akashic-ep4" },
+                    { number: 5, title: "Twilight of the Maidens", url: "https://example.com/akashic-ep5" },
+                    { number: 6, title: "The Pair's Surprise Attack", url: "https://example.com/akashic-ep6" },
+                    { number: 7, title: "The Simplest Magic", url: "https://example.com/akashic-ep7" },
+                    { number: 8, title: "The Sistine Who Leaps Through Time", url: "https://example.com/akashic-ep8" },
+                    { number: 9, title: "The Princess and the Sinking Capital", url: "https://example.com/akashic-ep9" },
+                    { number: 10, title: "The Witch of Researchers", url: "https://example.com/akashic-ep10" },
+                    { number: 11, title: "The Demon's Seal", url: "https://example.com/akashic-ep11" },
+                    { number: 12, title: "The Truth of the Sky Castle", url: "https://example.com/akashic-ep12" }
+                ]
+            },
+
+            chainsawman: {
+                title: "Chainsaw Man",
+                description: "Denji is a teenage boy living a harsh life, repaying his deceased father's debt by harvesting devil corpses with his pet devil-dog Pochita. After being killed by a devil, Pochita merges with him, giving him the power to transform into Chainsaw Man.",
+                episodes: [
+                    { number: 1, title: "Dog & Chainsaw", url: "https://example.com/chainsaw-ep1" },
+                    { number: 2, title: "Arrival in Tokyo", url: "https://example.com/chainsaw-ep2" },
+                    { number: 3, title: "Meowy's Whereabouts", url: "https://example.com/chainsaw-ep3" },
+                    { number: 4, title: "Rescue", url: "https://example.com/chainsaw-ep4" },
+                    { number: 5, title: "Gun Devil", url: "https://example.com/chainsaw-ep5" },
+                    { number: 6, title: "Kill Denji", url: "https://example.com/chainsaw-ep6" },
+                    { number: 7, title: "The Taste of a Kiss", url: "https://example.com/chainsaw-ep7" },
+                    { number: 8, title: "Gunfire", url: "https://example.com/chainsaw-ep8" },
+                    { number: 9, title: "From Kyoto", url: "https://example.com/chainsaw-ep9" },
+                    { number: 10, title: "Bruised & Battered", url: "https://example.com/chainsaw-ep10" },
+                    { number: 11, title: "Mission Start", url: "https://example.com/chainsaw-ep11" },
+                    { number: 12, title: "Katana vs. Chainsaw", url: "https://example.com/chainsaw-ep12" }
+                ]
+            },
+            overlord: {
+                title: "Overlord seson 1",
+                description: "When a popular MMORPG is shut down one day, a powerful player character named Momonga decides to stay in the game until the very end. After the servers go dark, he finds himself transported into the game world as his character, living in a now-real fantasy world.",
+                episodes: [
+                    { number: 1, title: "The End and the Beginning", url: "https://example.com/overlord-ep1" },
+                    { number: 2, title: "Floor Guardians", url: "https://example.com/overlord-ep2" },
+                    { number: 3, title: "Battle of Carne Village", url: "https://example.com/overlord-ep3" },
+                    { number: 4, title: "Ruler of Death", url: "https://example.com/overlord-ep4" },
+                    { number: 5, title: "Two Adventures", url: "https://example.com/overlord-ep5" },
+                    { number: 6, title: "Journey", url: "https://example.com/overlord-ep6" },
+                    { number: 7, title: "Wise King of the Forest", url: "https://example.com/overlord-ep7" },
+                    { number: 8, title: "Twin Swords of Death", url: "https://example.com/overlord-ep8" },
+                    { number: 9, title: "The Dark Warrior", url: "https://example.com/overlord-ep9" },
+                    { number: 10, title: "True Vampire", url: "https://example.com/overlord-ep10" },
+                    { number: 11, title: "The Bloody Valkyrie", url: "https://example.com/overlord-ep11" },
+                    { number: 12, title: "The Bloody Valkyrie II", url: "https://example.com/overlord-ep12" },
+                    { number: 13, title: "Player vs Non Player Character", url: "https://example.com/overlord-ep13" }
+                ]
+            },
+            undead: {
+                title: "مغامر الأموات غير المرغوب فيه",
+                description:
+                    "رينارت، مغامر من الدرجة الخامسة، يموت في معركة مع تنين. لكنه يستيقظ كهيكل عظمي غير ميت، مصمم على استعادة إنسانيته والارتقاء في مراتب المغامرين. في رحلته، يواجه تحديات فريدة ويكتشف أسرار عالمه الجديد كغير ميت.",
+                episodes: [
+                    { number: 1, title: "الموت والولادة الجديدة", url: "https://example.com/undead-adventurer-ep1" },
+                    { number: 2, title: "خطوات هيكل عظمي", url: "https://example.com/undead-adventurer-ep2" },
+                    { number: 3, title: "لقاء مع الماضي", url: "https://example.com/undead-adventurer-ep3" },
+                    { number: 4, title: "سر القوة الجديدة", url: "https://example.com/undead-adventurer-ep4" },
+                    { number: 5, title: "مواجهة في المدينة", url: "https://example.com/undead-adventurer-ep5" },
+                    { number: 6, title: "الصديق الأول", url: "https://example.com/undead-adventurer-ep6" },
+                    { number: 7, title: "اختبار المهارات", url: "https://example.com/undead-adventurer-ep7" },
+                    { number: 8, title: "أسرار الكهف المظلم", url: "https://example.com/undead-adventurer-ep8" },
+                    { number: 9, title: "مؤامرة في الظل", url: "https://example.com/undead-adventurer-ep9" },
+                    { number: 10, title: "الحقيقة المرة", url: "https://example.com/undead-adventurer-ep10" },
+                    { number: 11, title: "المعركة من أجل الإنسانية", url: "https://example.com/undead-adventurer-ep11" },
+                    { number: 12, title: "مغامر جديد", url: "https://example.com/undead-adventurer-ep12" },
+                ],
+            },
+            hitorigoto: {
+                title: "Kusuriya no Hitorigoto",
+                description: "في  إمبراطورية في الصين القديمة، تُختطف ماوماو، وهي شابة مدربة في فنون الطب العشبي، وتُباع كخادمة من مستوى منخفض في قصر الإمبراطور. باستخدام معرفتها وطبيعتها المراقبة، تبدأ في حل العديد من الألغاز الطبية داخل المحكمة بينما تحاول الحفاظ على ملفها الشخصي منخفضًا.",
+                episodes: [
+                    { number: 1, url: "https://mega.nz/embed/WQJ23JyY#7eeS5eQNOV5WGbIroCz1SYF4dKJdiHDelC_oJsFVE0w" },
+                    { number: 2, url: "https://mega.nz/embed/fFhBXbhA#gvzNd4P71zdk91I05wWWuagWR0jO-c9_XLDdo0PjnKs" },
+                    { number: 3, url: "https://mega.nz/embed/6Mp2DTpT#cl2zzBb2zLd77-z364EYiQzo5Xif5czXZM2P2la9fVw" },
+                    { number: 4, url: "https://mega.nz/embed/KUA02QAa#OPfaufyTuNy2qlQ1cKLFgAb90p1SOttn1HLSpdQKZBA" },
+                    { number: 5, url: "https://mega.nz/embed/PF4HBQLT#RE9wjX0Qgc1jJEDsRjxxd3fEKgrjb7zcEnQD3pajvBo" },
+                    { number: 6, url: "https://mega.nz/embed/bIBGDSqI#Si0vSXBP3nYQ_fxfD1BzFmtIXmOgvKB0hypA5LPBZOE" },
+                    { number: 7, url: "https://mega.nz/embed/LchT0ZAJ#30WSgAFIBrAZzAFIAYZtiaxKsEPtLZu2kQT7lXNnxLc" },
+                    { number: 8, url: "https://mega.nz/embed/6E5lWJbI#2MAFfBziu4MEu16VwEpvkXRcehsOsKCDIjM2iuXECJg" },
+                    { number: 9, url: "https://mega.nz/embed/DBwlBR6a#-TludOQvfvAq5iqY-mvpRnXFXYg6NtG6mqJJuyy733M" },
+                    { number: 10, url: "https://mega.nz/embed/eMJFXDCR#Qah2Ir36Drgbv-EssI-PY-PGUfKJUznQanqxVszmuOw" },
+                    { number: 11, url: "https://mega.nz/embed/Sdok3bgY#9TYhYcl4NJGZoro8cCFI97tL8xa2NHFo-G-y1GxLk0M" },
+                    { number: 12, url: "https://mega.nz/embed/ONBy1boa#a5-yFNZnHnoZwLwlxLjx3i_Vvb5xhYnNUCa8Q_L51yI" },
+                    { number: 13, url: "https://mega.nz/embed/bJJExZqQ#GE1bCg4Hc87mTuegpovBLgTrYn5G3dlESv2NWnsN7j4" },
+                    { number: 14, url: "https://mega.nz/embed/aRICCS7Y#fFW_SpaXSnW-GBvvIwE31U-Nx2H6QvhMiWiFzO44xVU" },
+                    { number: 15, url: "https://mega.nz/embed/Oc5HDLiY#1_rFpP5dycHP7NXQl_7FssWblZqrfIM4_FuCRxjM2WA" },
+                    { number: 16, url: "https://mega.nz/embed/mVYmnL4Z#I74q-RoaWVyi90MFJC0JelDutW1MuUhYaEuevNewq4c" },
+                    { number: 17, url: "https://mega.nz/embed/LUxzhI5B#mG3tV8Pl5WaKYDJFZkQBP2PmaLDCPh21ZMJ-cH7RA9s" },
+                    { number: 18, url: "https://mega.nz/embed/CMRznIRL#mOu61ipgBajIdftkGqcqXeE0YtydxgDi6vQor_UX8bE" },
+                    { number: 19, url: "https://mega.nz/embed/eA5CnJqI#BW9Ln5Tkshj17SbD2PtFYwX1SR6Ydcb0_QV1u0wMqWg" },
+                    { number: 20, url: "https://mega.nz/embed/nUx3lTpR#jxYiYYN3gXwRegIAcDJWVs4pqjV9WBjxVcKe62t-GVk" },
+                    { number: 21, url: "https://mega.nz/embed/2YxTUDjB#ni_6MDftJGzMyNwRPlyK1YOI38WLjL4ks9MZncPvKiM" },
+                    { number: 22, url: "https://mega.nz/embed/bF4BRIyR#Ex_YBDBBUqn-bwwoZHQeXOiVhHyf6DWpsmXxFTm0nDQ" },
+                    { number: 23, url: "https://mega.nz/embed/eE4gHA6D#APOi2hymVLpH348F-ci47Z70Fim6mUdQzKP8zo3gYyY" },
+                    { number: 24, url: "https://mega.nz/embed/icoGQZQR#tA4V6Tr3CRx64x9tQQz2HPPhd0IXei0OEUgLziMSAtU" }
+                ],
+            },
+
+
+
+
+            talker: {
+                title: "المتحدث الأكثر شهرة",
+                description:
+                    "نويل نيهاشي، الذي كان يُعرف سابقًا بأنه أضعف متحدث، يكتشف قدرة خفية تحوله إلى أقوى متحدث في عالم حيث تمتلك الكلمات قوة مادية. بينما يتنقل نويل في قوته الجديدة، يواجه التحديات، ويكوّن التحالفات، ويواجه الأعداء في مجتمع حيث الكلام هو القوة.",
+                episodes: [
+                    { number: 1, title: "المتحدث الأضعف", url: "https://mega.nz/embed/UdpHGLYT#MO_QrVnz48XqJ_k9CyeyEKrOG5pl_QsU7ktpG0x6jZ8" },
+                    { number: 2, title: "استيقاظ القوة الخفية", url: "https://mega.nz/embed/ANR1iRrB#wQkgLEmmFV0hkuL4kx1vB4lqMm94Ol7pNBegI-RDs2Q" },
+                    { number: 3, title: "الاختبار الأول للقوة", url: "https://mega.nz/embed/UQ4xWQaK#hb7dfkJkcYpNJdtZdOhpW0PtJmaAgACq1Fny9D7mUUY" },
+                    { number: 4, title: "حلفاء جدد", url: "https://mega.nz/embed/RN501IDb#FQFcUUwNzKlHy4lEWaUCBUzCYlRJhKa5-X7AEo9ZIok" },
+                    { number: 5, title: "أكاديمية المتحدثين", url: "https://mega.nz/embed/YI5yFJQB#0U5ApnsmYy5yxTc-c7WT7C4tEtvTATf36P8ODJ1y9o0" },
+                    { number: 6, title: "تحدي المنافس", url: "https://mega.nz/embed/sYYAiTDJ#o64Mi-w1pfuTUw-85aWXcWg4sIOQtpOeAE3YOBbezb8" },
+                    { number: 7, title: "أسرار الماضي", url: "https://mega.nz/embed/sYYAiTDJ#o64Mi-w1pfuTUw-85aWXcWg4sIOQtpOeAE3YOBbezb8" },
+                    { number: 8, title: "مونتاج التدريب", url: "https://mega.nz/embed/gcwABDCY#ABmEzEnhDgSPj9VEkDZdezTNeWRos__SQaHTDTaRu78" },
+                    { number: 9, title: "بداية البطولة", url: "https://mega.nz/embed/8JA0kKbA#L6RVwjtIVpQ38KU9RC63ALvQsfKebzxv925XtPfCyx0" },
+                    { number: 10, title: "خيانة غير متوقعة", url: "https://mega.nz/embed/tJ5kHKRT#bLGWrLo0Gvw8QUgQGwa-ohEUmph2qtzXkL2dUUo2EHQ" },
+                    { number: 11, title: "المواجهة النهائية", url: "https://mega.nz/embed/5dxWCLjL#m0XEbb9EE5kkyf5xXIIA4NIFQ47EqzJqfGEQ9VGNgdE" },
+                    { number: 12, title: "بداية جديدة", url: "https://mega.nz/embed/tEYyQSgR#h9K1cmsjU4yMe2gboSSTpLUmbnKqmn90v--6dr3e0m0" },
+                ],
+            },
+            dark: {
+                title: "فارس الظلام",
+                description:
+                    "في عالم من السحر والفروسية، يجد كيرا نفسه مرتبطًا بسيف أسطوري يمنحه قوى الظلام. مع قدراته الجديدة، يجب عليه أن يتعلم التحكم في قواه الغامضة بينما يواجه قوى الشر التي تهدد مملكته، ويكتشف الحقيقة وراء ماضيه الغامض.",
+                episodes: [
+                    { number: 1, title: "السيف المظلم", url: "https://example.com/dark-swordsman-ep1" },
+                    { number: 2, title: "قوة جديدة", url: "https://example.com/dark-swordsman-ep2" },
+                    { number: 3, title: "التدريب الأول", url: "https://example.com/dark-swordsman-ep3" },
+                    { number: 4, title: "مواجهة الماضي", url: "https://example.com/dark-swordsman-ep4" },
+                    { number: 5, title: "حلفاء غير متوقعين", url: "https://example.com/dark-swordsman-ep5" },
+                    { number: 6, title: "اختبار الإرادة", url: "https://example.com/dark-swordsman-ep6" },
+                    { number: 7, title: "أسرار القلعة", url: "https://example.com/dark-swordsman-ep7" },
+                    { number: 8, title: "المعركة في الظلام", url: "https://example.com/dark-swordsman-ep8" },
+                    { number: 9, title: "كشف المؤامرة", url: "https://example.com/dark-swordsman-ep9" },
+                    { number: 10, title: "قوة الصداقة", url: "https://example.com/dark-swordsman-ep10" },
+                    { number: 11, title: "مواجهة المصير", url: "https://example.com/dark-swordsman-ep11" },
+                    { number: 12, title: "فجر جديد", url: "https://example.com/dark-swordsman-ep12" },
+                ],
+            },
+
+            skuna: {
+                title: "Jujutsu Kaisen Season 1",
+                description: "Yuji Itadori, a high school student with extraordinary physical abilities, joins his school's Occult Club. After a cursed talisman - the finger of Sukuna, a demon - is accidentally unsealed, Yuji becomes the host of Sukuna, and enters the world of Jujutsu Sorcerers.",
+                episodes: [
+                    { number: 1, title: "Ryomen Sukuna", url: "https://example.com/jjk-ep1" },
+                    { number: 2, title: "For Myself", url: "https://example.com/jjk-ep2" },
+                    { number: 3, title: "Girl of Steel", url: "https://example.com/jjk-ep3" },
+                    { number: 4, title: "Curse Womb Must Die", url: "https://example.com/jjk-ep4" },
+                    { number: 5, title: "Curse Womb Must Die II", url: "https://example.com/jjk-ep5" },
+                    { number: 6, title: "After Rain", url: "https://example.com/jjk-ep6" },
+                    { number: 7, title: "Assault", url: "https://example.com/jjk-ep7" },
+                    { number: 8, title: "Boredom", url: "https://example.com/jjk-ep8" },
+                    { number: 9, title: "Small Fry and Reverse Retribution", url: "https://example.com/jjk-ep9" },
+                    { number: 10, title: "Idle Transfiguration", url: "https://example.com/jjk-ep10" },
+                    { number: 11, title: "Narrow-minded", url: "https://example.com/jjk-ep11" },
+                    { number: 12, title: "To You, Someday", url: "https://example.com/jjk-ep12" },
+                    { number: 13, title: "Tomorrow", url: "https://example.com/jjk-ep13" },
+                    { number: 14, title: "Kyoto Sister School Exchange Event - Group Battle 0", url: "https://example.com/jjk-ep14" },
+                    { number: 15, title: "Kyoto Sister School Exchange Event - Group Battle 1", url: "https://example.com/jjk-ep15" },
+                    { number: 16, title: "Kyoto Sister School Exchange Event - Group Battle 2", url: "https://example.com/jjk-ep16" },
+                    { number: 17, title: "Kyoto Sister School Exchange Event - Group Battle 3", url: "https://example.com/jjk-ep17" },
+                    { number: 18, title: "Sage", url: "https://example.com/jjk-ep18" },
+                    { number: 19, title: "Black Flash", url: "https://example.com/jjk-ep19" },
+                    { number: 20, title: "Nonstandard", url: "https://example.com/jjk-ep20" },
+                    { number: 21, title: "Jujutsu Koshien", url: "https://example.com/jjk-ep21" },
+                    { number: 22, title: "The Origin of Blind Obedience", url: "https://example.com/jjk-ep22" },
+                    { number: 23, title: "The Origin of Blind Obedience Part 2", url: "https://example.com/jjk-ep23" },
+                    { number: 24, title: "Accomplices", url: "https://example.com/jjk-ep24" }
+                ]
+            },
+
+
+        };
+
+        // DOM elements
+        const videoPlayer = document.getElementById("videoPlayer");
+        const prevButton = document.getElementById("prevButton");
+        const nextButton = document.getElementById("nextButton");
+        const episodeInfo = document.getElementById("episodeInfo");
+        const seriesTitle = document.getElementById("seriesTitle");
+        const seriesDescription = document.getElementById("seriesDescription");
+        const episodeList = document.getElementById("episodeList");
+
+        let currentEpisode = 0;
+
+        function initPage() {
+            // Try to load the selected movie from localStorage
+            try {
+                const movieData = JSON.parse(localStorage.getItem('selectedMovie'));
+                if (movieData && movieData.title && seriesData[movieData.title.toLowerCase()]) {
+                    currentSeries = movieData.title.toLowerCase();
+                }
+            } catch (error) {
+                console.error("Error loading selected movie:", error);
+            }
+
+            const series = seriesData[currentSeries];
+            seriesTitle.textContent = series.title;
+            seriesDescription.textContent = series.description;
+            updateEpisodeInfo();
+            updateVideoPlayer();
+            createEpisodeList();
+            updateNavigationButtons();
+        }
+
+        function updateEpisodeInfo() {
+            const series = seriesData[currentSeries];
+            const episode = series.episodes[currentEpisode];
+            episodeInfo.textContent = `Episode ${episode.number}: ${episode.title}`;
+        }
+
+        function updateVideoPlayer() {
+            const series = seriesData[currentSeries];
+            videoPlayer.src = series.episodes[currentEpisode].url;
+        }
+
+        function createEpisodeList() {
+            episodeList.innerHTML = "";
+            const series = seriesData[currentSeries];
+            series.episodes.forEach((episode, index) => {
+                const episodeItem = document.createElement("div");
+                episodeItem.classList.add("episode-item");
+                if (index === currentEpisode) {
+                    episodeItem.classList.add("active");
+                }
+                episodeItem.textContent = `Episode ${episode.number}: ${episode.title}`;
+                episodeItem.addEventListener("click", () => {
+                    currentEpisode = index;
+                    updateEpisode();
+                });
+                episodeList.appendChild(episodeItem);
+            });
+        }
+
+        function updateEpisode() {
+            updateEpisodeInfo();
+            updateVideoPlayer();
+            updateEpisodeList();
+            updateNavigationButtons();
+        }
+
+        function updateEpisodeList() {
+            const episodeItems = episodeList.querySelectorAll(".episode-item");
+            episodeItems.forEach((item, index) => {
+                item.classList.toggle("active", index === currentEpisode);
+            });
+        }
+
+        function updateNavigationButtons() {
+            const series = seriesData[currentSeries];
+            prevButton.disabled = currentEpisode === 0;
+            nextButton.disabled = currentEpisode === series.episodes.length - 1;
+        }
+
+        prevButton.addEventListener("click", () => {
+            if (currentEpisode > 0) {
+                currentEpisode--;
+                updateEpisode();
+            }
+        });
+
+        nextButton.addEventListener("click", () => {
+            const series = seriesData[currentSeries];
+            if (currentEpisode < series.episodes.length - 1) {
+                currentEpisode++;
+                updateEpisode();
+            }
+        });
+
+        // Initialize the page
+        initPage();
+    </script>
+</body>
+
+</html>
